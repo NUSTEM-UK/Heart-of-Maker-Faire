@@ -3,7 +3,7 @@
 // Doesn't entirely work at present - threshold seems a little low for this piezo.
 // May need sensor strapped tighter to finger. Which could be a problem.
 
-int threshold = 15;
+int threshold = 1;
 int oldvalue = 0;
 int newvalue = 0;
 unsigned long oldmillis = 0;
@@ -20,7 +20,7 @@ void loop() {
   newvalue = 0;
   
   for(int i=0; i<64; i++){ // Average over 16 measurements
-    newvalue += analogRead(A2);
+    newvalue += analogRead(A0);
   }
   newvalue = newvalue/64;
   
