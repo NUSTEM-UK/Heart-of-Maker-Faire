@@ -1,8 +1,9 @@
-r"""ECG simulator example code.
+"""ECG simulator example code.
 
-Based on work in http://stackoverflow.com/questions/4387878/\
-simulator-of-realistic-ecg-signal-from-rr-data-for-matlab-or-python
+Based on work in http://stackoverflow.com/questions/4387878/
 by Diarmaid O Cualain and Steve Tjoa.
+Published here: https://github.com/diarmaidocualain/ecg_simulation
+Licensed under BSD.
 """
 import pylab
 import scipy.signal as signal
@@ -66,7 +67,7 @@ pylab.show()
 # Might be worth checking nyquist here
 # e.g. sampling rate >= (2 * template sampling rate)
 sampling_rate = 50.0
-num_samples = sampling_rate * capture_length
+num_samples = int(sampling_rate * capture_length)
 ecg_sampled = signal.resample(ecg_template_noisy, num_samples)
 
 # Scale the normalised amplitude of the sampled ecg to whatever the ADC
