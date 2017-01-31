@@ -1,4 +1,4 @@
-# Dependencies
+# Dependencies.
 # zbarlight
 # sudo apt-get install libzbar0 libzbar-dev
 # sudo pip install zbar
