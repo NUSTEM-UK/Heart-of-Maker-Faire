@@ -3,6 +3,7 @@
 # sudo apt-get install libzbar0 libzbar-dev
 # sudo pip install zbar
 # opencv
+# sudo apt-get install libopencv-dev python-opencv
 
 
 from picamera.array import PiRGBArray
