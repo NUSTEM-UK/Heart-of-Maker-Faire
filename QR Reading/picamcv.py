@@ -21,23 +21,23 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 time.sleep(0.1)
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-	image = frame.array
-	cv2.imshow("Frame", image)
-	key = cv2.waitKey(1) & 0xFF
-	
-	rawCapture.truncate(0)
-	
-	if key == ord("q"):
-		out = cv2.imwrite('qr.jpg', image)
-		break
-		
+    image = frame.array
+    cv2.imshow("Frame", image)
+    key = cv2.waitKey(1) & 0xFF
+    
+    rawCapture.truncate(0)
+    
+    if key == ord("q"):
+        out = cv2.imwrite('qr.jpg', image)
+        break
+        
 file_path = "qr.jpg"
 with open(file_path, 'rb') as image_file:
-	image = Image.open(image_file)
-	image.load()
-	
+    image = Image.open(image_file)
+    image.load()
+    
 codes = zbarlight.scan_codes('qrcode', image)
-print codes		
-		
+print codes     
+        
 cv2.destroyAllWindows()
 
