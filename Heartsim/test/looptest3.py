@@ -19,8 +19,3 @@ for index, heart in enumerate(hearts):
     print heart, heartlengths[index]
     for index, beats in enumerate(heart):
         print heart[index]
-
-for frame in xrange(frames):
-    for index, heart in enumerate(hearts):
-        print heart(frame % heartlengths[index]),
-    print
