@@ -1,5 +1,5 @@
 # Let's make a list of lists
-frames = 50
+maxframes = 50
 heart01 = [0, 1, 2, 3, 4, 5]
 heart02 = [6, 7, 8, 9]
 hearts = [heart01, heart02, heart01]
@@ -27,7 +27,20 @@ for index, heartlength in enumerate(heartlengths):
 #         print heart[index]
 
 # ...and now here's a sane way of producing the same thing:
-for i in range(len(hearts)):
-    print "Heart: ", i
-    for j in range(len(hearts[i])):
-        print hearts[i][j]
+# print "OUTPUT HEART DATA"
+# for i in range(len(hearts)):
+#     print "Heart: ", i
+#     for j in range(len(hearts[i])):
+#         print hearts[i][j]
+
+print "-------------"
+
+framecount = 0
+for framecount in range(maxframes):
+    print framecount,
+    for i in range(len(hearts)):
+        print hearts[i][framecount % len(hearts[i])],
+        # On the face of it, the following is fractionally slower. Huh.
+        # print hearts[i][framecount % heartlengths[i]],
+    # New line, please!
+    print
