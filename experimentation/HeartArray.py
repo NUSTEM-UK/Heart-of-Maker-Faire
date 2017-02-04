@@ -3,16 +3,33 @@ import time
 import random
 import re
 
-ser = serial.Serial('/dev/ttyUSB0', 9600)
-heartCells = [0] * 10
+loadSavedData = raw_input("Do you wish to load previous data? y/n ")
 
-emptyCells = []
-
-codeNum = 0
-for i in range(0,10):
-    emptyCells.append(i)
+if loadSaved == 'y':
     
-while True:
+
+# get information on the total possible number of heart cells
+totalHearts = int(raw_input("What is the total number of heart cells?  "))
+
+# setup the heart rate Arduino serial connection, choose port and baud depending on Arduino and Pi settings
+ser = serial.Serial('/dev/ttyUSB0', 9600)
+
+# Create the heartQR map
+heartQR = [0] * totalHearts
+print("Here's your empty list...")
+print(heartQR)
+print("")
+
+#Create a list of the empty cells that need to be filled
+emptyCells = []
+for i in range(0,totalHearts):
+    emptyCells.append(i)
+print("Here's your remaining empty cells...")
+print(emptyCells)
+print("")
+
+    
+while False:
     if not emptyCells:      #if there are no empty spaces left, end the programme
         break
     status = True
@@ -33,7 +50,7 @@ while True:
 
 print("All cells are filled")
 
-print(heartCells)
+print(heartQR)
         
             
             
