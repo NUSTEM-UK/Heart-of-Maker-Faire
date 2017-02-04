@@ -15,7 +15,19 @@ for index, heartlength in enumerate(heartlengths):
 # print heartlengths[0]
 # print len(hearts[1])
 
-for index, heart in enumerate(hearts):
-    print heart, heartlengths[index]
-    for index, beats in enumerate(heart):
-        print heart[index]
+# Just to prove I can do it, here's a loop using iterators.
+# ...but man, this hurts my heard for multidimensional arrays.
+# Also: if I have to port this to Processing for performance reasons,
+# I can't imagine how grateful I'm going to be to my former self
+# for adopting C-style loop idioms over more Pythonic approaches.
+
+# for index, heart in enumerate(hearts):
+#     print heart, heartlengths[index]
+#     for index, beats in enumerate(heart):
+#         print heart[index]
+
+# ...and now here's a sane way of producing the same thing:
+for i in range(len(hearts)):
+    print "Heart: ", i
+    for j in range(len(hearts[i])):
+        print hearts[i][j]
