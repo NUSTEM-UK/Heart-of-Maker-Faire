@@ -89,6 +89,7 @@ while True:
 
         elif newQR == False:
                 # send data to MQTT to have the
+                break
 
 
 
@@ -112,10 +113,12 @@ def HRgetter ():
     newHR = [int(s) for s in re.findall(r'\d+', stringHR)]
     if 40 < newHR < 180:
         return newHR
-    elif newHR == 0;
+    elif newHR == 0:
         # some reset code
+        
     else:
         #some sort of error
+        
 
 
 def MQTTHeartString (location, status, data):
