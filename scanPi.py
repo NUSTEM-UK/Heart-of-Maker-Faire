@@ -7,6 +7,7 @@ import cv2
 from PIL import Image
 import zbarlight
 import serial
+import paho.mqtt.client as mqtt
 
 # decide whether to load previously saved data
 #loadSavedData = raw_input("Do you wish to load previous data? y/n ")
@@ -74,13 +75,26 @@ while True:
                 # assign the QR code to the new position
                 heartCells[heartPosition] = code
 
+                # now get the heart rate data from Serial or MQTT
+                HRgetter()
+
+                # turn the thee values to a string
+                MQTTHeartString(position, 1, newHR)
+                # now push the heartPosition, HeartRate and, status code to MQTT
+                mqttc = mqtt.Client("python_pub")
+                mqttc.connect('localhost', 1883)
+                mqttc.publish("homf/update", MQQTString)
+
+                # wait for comfirmation of placed heart via push button or timeout
+
+        elif newQR == False:
+                # send data to MQTT to have the
 
 
 
 
 
 # functions
-
 def QRread ():
     # take image of the QR code and save
     camera.capture("newQR.png")
@@ -91,3 +105,19 @@ def QRread ():
     # use zbarlight to scan the QR image for codes
     code = zbarlight.scan_codes('qrcode', image)
     return code
+
+def HRgetter ():
+    # instructions for getting the HR from Arduino go here.
+    stringHR = ser.readline()
+    newHR = [int(s) for s in re.findall(r'\d+', stringHR)]
+    if 40 < newHR < 180:
+        return newHR
+    elif newHR == 0;
+        # some reset code
+    else:
+        #some sort of error
+
+
+def MQTTHeartString (location, status, data):
+    MQQTString = str(location) + '-' + str(status) + '-' + str(data)
+    return MQQTString
