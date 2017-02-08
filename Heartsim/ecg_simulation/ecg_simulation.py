@@ -3,7 +3,7 @@
 Based on work in http://stackoverflow.com/questions/4387878/
 by Diarmaid O Cualain and Steve Tjoa.
 Published here: https://github.com/diarmaidocualain/ecg_simulation
-Licensed under BSD.
+Licensed under BSD, more-or-less.
 Minor modifications by Jonathan Sanderson, Northumbria University, 2017-01-31
 """
 import pylab
