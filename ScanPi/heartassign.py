@@ -19,10 +19,8 @@ RETRY = True
 while RETRY:
 #choose a random position in the map
     INDEX = random.randint(0, len(QR_MAPPING)-1)
-    print(INDEX)
 #check if that random position is empty (ie 0)
     if QR_MAPPING[INDEX] == 0:
-        print('You can use this cell')
 #add the QR code to the position
         QR_MAPPING[INDEX] = SCANNED_QR
         RETRY = False
