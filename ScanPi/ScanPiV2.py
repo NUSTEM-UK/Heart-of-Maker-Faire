@@ -9,6 +9,7 @@ from collections import Counter
 import sys
 import random
 import paho.mqtt.client as mqtt
+import pickle
 
 # setup
 # setup for the PiCamera to record the QR codes
@@ -26,8 +27,12 @@ hrscannerlight = LED(16)
 # heart placed button on pin 4
 heartButton = Button(4)
 
+# set the filename of this run
+ratesfilename = "rates" + time.strftime("%Y%m%d-%H%M%S") + ".p"
+qrsfilename = "qrs" + time.strftime("%Y%m%d-%H%M%S") + ".p"
+
 # functions
-def QRread ():
+def QRread():
 # take image of the QR code and save
     camera.capture("newQR.png")
 # open the image file for use by zbarlight
@@ -60,7 +65,7 @@ def getheartrate():
             return data.most_common
         time.sleep(0.1)
 
-def MQTTsend (location, status, data):
+def MQTTsend(location, status, data):
 # turn the data into a string
     MQQTString = str(location) + '-' + str(status) + '-' + str(data)
     mqttc = mqtt.Client("python_pub")
@@ -69,9 +74,13 @@ def MQTTsend (location, status, data):
 
 # decide whether to load previously saved data
 if len(sys.argv) > 2:
-    pass
+    QRmap = pickle.load(open(argv[2], "rb"))
+    heartRateStore = pickle.load(open(argv[3], "rb"))
+    for i in len(QRmap):
+        MQTTsend( i, 2, heartRateStore[i])
 else:
     QRmap = [0] * sys.argv[1]
+    heartRateStore = [0] * sys.argv[1]
 
 while True:
 # turn on heart scanner light
@@ -83,6 +92,7 @@ while True:
 # check whether the QR is new or already in use
         for i in QRmap:
             if scannedQR == QRmap[i]:
+                #MQTTsend(i, 1, heartrate(i))
                 pass
             else:
 #loop until an empty cell is found
@@ -101,11 +111,16 @@ while True:
                 hrscannerlight.on()
 # get heart rate data
                 heartrate = getheartrate()
+# place the heart rate into the save file list
+                heartRateStore[INDEX] = heartrate
 # turn off the heart scanner light
                 hrscannerlight.off()
 # send the cell location, status and heart rate to the mqtt
-                MQTTsend (location, 1, heartrate)
+                MQTTsend ( location, 1, heartrate)
 # wait for the confirmation button to be pressed
                 heartButton.wait_for_press()
 # send the new status to the MQTT
-                MQTTsend (location, 0, heartrate)
+                MQTTsend ( location, 0, heartrate)
+# save the data to the revelant file
+                pickle.dump(QRmap, open(qrsfilename, "wb"))
+                pickle.dump(heartRateStore, open(ratesfilename, "wb"))
