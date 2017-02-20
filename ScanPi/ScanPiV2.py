@@ -8,7 +8,7 @@ import time
 from collections import Counter
 import sys
 import random
-import paho.mqtt.client as mqtt
+import paho.mqtt.publish as publish
 import pickle
 import re # for turning the styring into a int
 from scipy.stats import mode
@@ -61,8 +61,6 @@ def getheartrate():
 # read the current line of the serial connection from the arduino
         serial_line = str(ser.readline())
         size = len(serial_line)
-        print(size)
-        print(serial_line)
         newSerial = int(serial_line[2:(size-5)])
         print(newSerial)
 # add the new HR data to the end of the list
@@ -75,18 +73,19 @@ def getheartrate():
 # is the range less than two?
         if RANGE < 5:
 # count the data, close the serial connetion and return the most common HR value
-            data = Counter(RecentHrs)
+            m = mode(RecentHrs)
             ser.close()
-            return int(data.most_common)
+            return int(m[0])
         time.sleep(0.1)
 
 def MQTTsend(location, status, data):
 # turn the data into a string
-    pass
+    print("Nothing being sent to the MQTT during testing")
     MQQTString = str(location) + '-' + str(status) + '-' + str(data)
-    mqttc = mqtt.Client("python_pub")
-    mqttc.connect('localhost', 1883)
-    mqttc.publish("homf/update", MQQTString)
+    publish.single("homf/update", payload=MQQTString, qos=2)
+    # mqttc = mqtt.Client("python_pub")
+    # mqttc.connect('localhost', 1883)
+    # mqttc.publish("homf/update", MQQTString)
 
 # decide whether to load previously saved data
 if len(sys.argv) > 2:
