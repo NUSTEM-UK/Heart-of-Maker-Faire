@@ -27,6 +27,7 @@ volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 void setup(){
   delay(20);
   pinMode(blinkPin,OUTPUT);         // pin that will blink to your heartbeat!
+pinMode(BUILTIN_LED, OUTPUT);
 pinMode(fadePin,OUTPUT);          // pin that will fade to your heartbeat!
   Serial.begin(115200);             // we agree to talk fast!
   interruptSetup();                 // sets up to read Pulse Sensor signal every 2mS  
@@ -44,16 +45,16 @@ void loop(){
 
      }
      
-  ledFadeToBeat();
-  delay(10);                             //  take a break
+//  ledFadeToBeat();
+//  delay(10);                             //  take a break
 }
 
 
-void ledFadeToBeat(){
-    fadeRate -= 15;                         //  set LED fade value
-    fadeRate = constrain(fadeRate,0,255);   //  keep LED fade value from going into negative numbers!
-    analogWrite(fadePin,fadeRate);          //  fade LED
-  }
+//void ledFadeToBeat(){
+//    fadeRate -= 15;                         //  set LED fade value
+//    fadeRate = constrain(fadeRate,0,255);   //  keep LED fade value from going into negative numbers!
+//    analogWrite(fadePin,fadeRate);          //  fade LED
+//  }
 
 
 void sendDataToProcessing(char symbol, int data ){
