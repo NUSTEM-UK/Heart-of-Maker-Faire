@@ -31,7 +31,7 @@ for heart in range(number_of_hearts):
     # print "Heart: ", heart, "Frames: ", len(hearts[heart])
 
 framecount = 0
-maxframes = 500
+maxframes = 5000
 
 # time.sleep(3)
 

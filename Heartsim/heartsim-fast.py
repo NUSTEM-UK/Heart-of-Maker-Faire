@@ -31,7 +31,7 @@ for heart in range(number_of_hearts):
     # print "Heart: ", heart, "Frames: ", len(hearts[heart])
 
 framecount = 0
-maxframes = 500
+maxframes = 5000
 
 # time.sleep(3)
 
@@ -42,7 +42,7 @@ for framecount in xrange(maxframes):
         for pixel in range(5):
             pixels[pixel_start + pixel] = (brightness, 0, 0)
     client.putPixels(0, pixels)
-    # time.sleep(1/fps)
+    time.sleep(1/fps)
 
 pixels = [(0, 0, 0)] * numLEDs
 client.putPixels(0, pixels)
