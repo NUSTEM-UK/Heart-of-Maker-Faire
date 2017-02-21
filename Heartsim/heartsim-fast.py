@@ -3,7 +3,7 @@
 Let's light this sucker up.
 """
 
-import opc
+import fastopc
 import time
 from generate_pulse import sinedata
 
@@ -15,7 +15,7 @@ LEDstop = 512
 # Fire up the OPC connection
 ADDRESS = "localhost:7890"
 # Create a client object
-client = opc.Client(ADDRESS)
+client = fastopc.FastOPC(ADDRESS)
 
 # Initialise the pixel data structure
 pixels = [(0, 0, 0)] * numLEDs
@@ -31,9 +31,9 @@ for heart in range(number_of_hearts):
     # print "Heart: ", heart, "Frames: ", len(hearts[heart])
 
 framecount = 0
-maxframes = 500
+maxframes = 5000
 
-time.sleep(3)
+# time.sleep(3)
 
 for framecount in xrange(maxframes):
     for i in range(number_of_hearts):
@@ -41,8 +41,8 @@ for framecount in xrange(maxframes):
         pixel_start = LEDstart + (i*5)
         for pixel in range(5):
             pixels[pixel_start + pixel] = (brightness, 0, 0)
-    client.put_pixels(pixels)
+    client.putPixels(0, pixels)
     time.sleep(1/fps)
 
 pixels = [(0, 0, 0)] * numLEDs
-client.put_pixels(pixels)
+client.putPixels(0, pixels)
