@@ -1,3 +1,19 @@
+// Brightness animation frames for heart beat pulses.
+// Simulated via Daubechies’ wavelets (see Python: beatData2.py),
+// with some data cleanup in a spreadsheet.
+
+// It's a reasonable analogue to a PQRST heart ECG, without sticking too
+// closely to that as a simulation target: the ECG plot heart electrical
+// activity, when what we want here is an analogue of physical movement.
+// ...so we're not going to get too sniffy about the precise shape of the
+// pulse.
+
+// This pulse presents 240 frames of animation for up to ~3 seconds at 60fps,
+// so it's (slightly) oversampled. Each Heart object calculates the stepping
+// through the animation frames implied by its own rate. So a 60bpm heart
+// steps through every 4 frames of this animation, a 120bpm heart every 2
+// frames, and so on.
+
 int[] frames = {
     78,
     78,

@@ -41,16 +41,31 @@ class Heart {
         step = rate/240.0 * (60.0/4.0);
     }
 
-    void setColour(float t_hue) {
-        hue = int(t_hue);
+    void setColour(float t_hue, float t_duration) {
+        targetHue = int(t_hue);
+        framesToGo = int(t_duration*60);
+        println("Heart ", x, y, " changing to hue ", targetHue);
     }
 
     // Oscillation means increase angle
     void update() {
+        // Cycle brightness animation
         currentAnimFrame += round(step);
         currentAnimFrame = currentAnimFrame % numFrames;
         mag = frames[currentAnimFrame];
-        // angle += 0.001 * rate;
+
+        // Handle colour animation
+        if (hue != targetHue && framesToGo < 2) {
+            hue = targetHue;
+            println("Hit targetColour");
+        } else if (hue != targetHue && framesToGo != 0) {
+            if (targetHue > hue) {
+                hue += int((targetHue - hue) / framesToGo);
+            } else {
+                hue -= int((hue - targetHue) / framesToGo);
+            }
+            framesToGo--;
+        }
     }
 
     void display() {

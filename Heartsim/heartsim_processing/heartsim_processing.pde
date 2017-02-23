@@ -9,7 +9,7 @@ int cols = 36;
 int rows = 14;
 int numHearts = cols * rows;
 
-int heartsize = 10;  // pixel width/height
+int heartsize = 20;  // pixel width/height
 
 void settings() {
     // Have to do this here in Processing3.x, rather than in setup()
@@ -59,8 +59,14 @@ void draw() {
     }
 
     // Randomly set colour of random cell, for teh lolz
-    // int targetHeart = int(random(numHearts));
-    // hearts[targetHeart].setColour(random(255));
+    // Do this every two seconds, on a two second animation time
+    if (frameCount % 120 == 0) {
+        int targetHeart = int(random(numHearts));
+        hearts[targetHeart].setColour(random(255), 2.0 );
+    }
 
-    // println(frameRate);
+    // If we're badly dropping frames, tell the console
+    if (frameRate < 58 ) {
+        println(frameRate);
+    }
 }
