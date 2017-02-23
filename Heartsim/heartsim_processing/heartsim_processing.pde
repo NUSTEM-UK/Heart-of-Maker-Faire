@@ -1,6 +1,9 @@
 // Adapted from the 2D Array example code, primarily.
 
 OPC opc;
+import mqtt.*;
+
+MQTTClient client;
 
 Heart[] hearts;
 
@@ -43,6 +46,15 @@ void setup() {
     // void ledStrip(int index, int count, float x, float y, float spacing, float angle, boolean reversed)
     opc.ledStrip(448, 60, ((cols*heartsize)/6), (heartsize * 7)-(heartsize/2), (heartsize/5), 0, true);
 
+    // Initialise the MQTT connection
+    client = new MQTTClient(this);
+    // Connect to MQTT server, identifying this client ID as heartsim
+    client.connect("mqtt://localhost", "heartsim");
+    // Subscribe to the /heart topic
+    client.subscribe("/heart");
+    // client.subscribe(".heart", int qos);
+
+
     frameRate(60);
     colorMode(HSB);
 
@@ -69,4 +81,8 @@ void draw() {
     if (frameRate < 58 ) {
         println(frameRate);
     }
+}
+
+void messageReceived(String topic, byte[] payload) {
+    println("new message: " + topic + " - " + new String(payload));
 }
