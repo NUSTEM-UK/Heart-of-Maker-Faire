@@ -12,6 +12,7 @@ int numHearts = cols * rows;
 int heartsize = 40;  // pixel width/height
 
 void settings() {
+    // Have to do this here in Processing3.x, rather than in setup()
     size(cols * heartsize, rows * heartsize);
 }
 
@@ -27,12 +28,15 @@ void setup() {
         int ypos = abs(i / cols) * heartsize;
         // float hue = random(255);
         float hue = 0;
+        float heartRate = random(20, 200);
+        // float heartRate = 60;
         hearts[i] = new Heart(
             xpos, ypos, heartsize,
-            random(20,200),
+            heartRate,
             hue
         );
     }
+    // Connect to the OPC server
     opc = new OPC(this, "127.0.0.1", 7890);
     // Set the location of several LEDs arranged in a strip.
     // (x,y) is the center of the strip.
@@ -54,7 +58,7 @@ void draw() {
         hearts[i].display();
     }
 
-    // Randomly set colour of random cell, for teh lolz 
+    // Randomly set colour of random cell, for teh lolz
     // int targetHeart = int(random(numHearts));
     // hearts[targetHeart].setColour(random(255));
 
