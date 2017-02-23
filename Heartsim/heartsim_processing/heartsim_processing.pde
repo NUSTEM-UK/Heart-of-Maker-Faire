@@ -41,6 +41,7 @@ void setup() {
             hue
         );
     }
+
     // Connect to the OPC server
     opc = new OPC(this, "127.0.0.1", 7890);
     // Set the location of several LEDs arranged in a strip.
@@ -65,8 +66,8 @@ void setup() {
 
 void draw() {
     background(0);
-    // The counter variables i and j are also the column and row numbers and
-    // are used as arguments to the constructor for each object in the grid.
+
+    // Iterate over the hearts, telling each to update and display.
     for (int i = 0; i < numHearts; i++) {
         // Oscillate and display each object
         hearts[i].update();
@@ -84,6 +85,8 @@ void draw() {
     if (frameRate < 58 ) {
         println(frameRate);
     }
+
+    // ...and around we go again
 }
 
 void messageReceived(String topic, byte[] payload) {
