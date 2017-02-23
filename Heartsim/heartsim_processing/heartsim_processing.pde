@@ -9,7 +9,7 @@ int cols = 36;
 int rows = 14;
 int numHearts = cols * rows;
 
-int heartsize = 40;  // pixel width/height
+int heartsize = 10;  // pixel width/height
 
 void settings() {
     // Have to do this here in Processing3.x, rather than in setup()
@@ -28,7 +28,7 @@ void setup() {
         int ypos = abs(i / cols) * heartsize;
         // float hue = random(255);
         float hue = 0;
-        float heartRate = random(20, 200);
+        float heartRate = random(50, 120);
         // float heartRate = 60;
         hearts[i] = new Heart(
             xpos, ypos, heartsize,
@@ -62,5 +62,5 @@ void draw() {
     // int targetHeart = int(random(numHearts));
     // hearts[targetHeart].setColour(random(255));
 
-    println(frameRate);
+    // println(frameRate);
 }
