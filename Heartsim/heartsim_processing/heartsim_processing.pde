@@ -12,6 +12,8 @@ int cols = 36;
 int rows = 14;
 int numHearts = cols * rows;
 
+// For Raspberry Pi, set this to 10 for 60fps performance.
+// Also set noStroke() in Heart.display().
 int heartsize = 20;  // pixel width/height
 
 void settings() {
@@ -47,6 +49,7 @@ void setup() {
     opc.ledStrip(448, 60, ((cols*heartsize)/6), (heartsize * 7)-(heartsize/2), (heartsize/5), 0, true);
 
     // Initialise the MQTT connection
+    // See https://github.com/256dpi/processing-mqtt
     client = new MQTTClient(this);
     // Connect to MQTT server, identifying this client ID as heartsim
     client.connect("mqtt://localhost", "heartsim");
@@ -85,4 +88,5 @@ void draw() {
 
 void messageReceived(String topic, byte[] payload) {
     println("new message: " + topic + " - " + new String(payload));
+    // TODO: parse and act on received messages.
 }

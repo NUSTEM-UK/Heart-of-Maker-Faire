@@ -69,8 +69,8 @@ class Heart {
     }
 
     void display() {
-        // Setting noStroke() doubles available frame rate (to about 40 on RPi,
-        // 120 on low-end Windows tablet; 550+ on iMac 5K)
+        // Setting noStroke() doubles available frame rate
+        // Set noStroke() for Raspberry Pi 60fps.
         stroke(255);
         // noStroke();
         // fill(127+127*sin(angle), 255, 255);
