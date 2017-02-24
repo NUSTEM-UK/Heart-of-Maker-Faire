@@ -1,11 +1,10 @@
 # modules
+import time
 from picamera import *
 from PIL import Image
 import zbarlight
 from gpiozero import LightSensor, LED, Button
 import serial
-import time
-from collections import Counter
 import sys, os
 import random
 import paho.mqtt.publish as publish
