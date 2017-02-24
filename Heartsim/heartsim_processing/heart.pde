@@ -37,8 +37,15 @@ class Heart {
 
     void setRate(float t_rate) {
         rate = t_rate;
-        // step for animation; correct for oversampling of animation data
-        step = rate/240.0 * (60.0/4.0);
+        if (rate != 0) {
+            // step for animation; correct for oversampling of animation data
+            step = rate/240.0 * (60.0/4.0);
+        } else {
+            // We have no assigned heart rate, and we're going to run the
+            // default animation at 1 frame per frame
+            step = 0.5;
+        }
+
     }
 
     void setColour(float t_hue, float t_duration) {
@@ -52,12 +59,21 @@ class Heart {
         // Cycle brightness animation
         currentAnimFrame += round(step);
         currentAnimFrame = currentAnimFrame % numFrames;
-        mag = frames[currentAnimFrame];
+        if (rate != 0) {
+            // We have a heart rate, so
+            // Pick frame from beat simulation
+            mag = frames[currentAnimFrame];
+        } else {
+            // We don't have an assigned rate, so
+            // Pick frame from default animation
+            mag = framesDefault[currentAnimFrame];
+        }
+
 
         // Handle colour animation
         if (hue != targetHue && framesToGo < 2) {
             hue = targetHue;
-            println("Hit targetColour");
+            println("Heart ", x, y, " hit targetColour");
         } else if (hue != targetHue && framesToGo != 0) {
             if (targetHue > hue) {
                 hue += int((targetHue - hue) / framesToGo);
@@ -69,8 +85,8 @@ class Heart {
     }
 
     void display() {
-        // Setting noStroke() doubles available frame rate (to about 40 on RPi,
-        // 120 on low-end Windows tablet; 550+ on iMac 5K)
+        // Setting noStroke() doubles available frame rate
+        // Set noStroke() for Raspberry Pi 60fps.
         stroke(255);
         // noStroke();
         // fill(127+127*sin(angle), 255, 255);
