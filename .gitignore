@@ -9,6 +9,9 @@ __pycache__/
 # Pickle files
 *.p
 
+# QR png files
+*png
+
 #################################
 # Java generated files          #
 #################################
