@@ -10,8 +10,9 @@ import sys, os
 import random
 import paho.mqtt.publish as publish
 import pickle
-import re # for turning the styring into a int
+import re # for turning the string into a int
 from statistics import mode
+#from ScanPiModules import *
 
 # setup
 # setup for the PiCamera to record the QR codes
@@ -93,13 +94,11 @@ def getheartrate():
             print("oops")
 
 def MQTTsend(location, status, data):
-# turn the data into a string
-    #print("Sednding data to MQTT")
+    # turn the data into a string
     MQQTString = str(location) + '-' + str(status) + '-' + str(data)
     mqttc = mqtt.Client("python_pub")
     mqttc.connect('localhost', 1883)
     mqttc.publish("homf/update", MQQTString)
-    #print("Sccuess")
 
 # decide whether to load previously saved data
 if len(sys.argv) > 2:
