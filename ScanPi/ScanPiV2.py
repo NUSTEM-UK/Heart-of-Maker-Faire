@@ -8,7 +8,7 @@ import time
 from collections import Counter
 import sys, os
 import random
-import paho.mqtt.client as mqtt
+import paho.mqtt.publish as publish
 import pickle
 import re # for turning the styring into a int
 from statistics import mode
@@ -67,6 +67,7 @@ def getheartrate():
     print(RecentHrs)
     while True:
 # read the current line of the serial connection from the arduino
+
         try:
             serial_line = str(ser.readline())
             time.sleep(0.1)
