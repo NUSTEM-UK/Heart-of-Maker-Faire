@@ -11,7 +11,7 @@ import random
 import paho.mqtt.client as mqtt
 import pickle
 import re # for turning the styring into a int
-from scipy.stats import mode
+from statistics import mode
 
 # setup
 # setup for the PiCamera to record the QR codes
@@ -47,12 +47,22 @@ def QRread():
         image.load()
 # use zbarlight to scan the QR image for codes
     code = zbarlight.scan_codes('qrcode', image)
-    print("QR code is %s" % code)
-    return code
+
+    if code is None:
+        print("QR code is None Type")
+        return False 
+        
+    else:
+        QRstr = str(code[0])
+        QRint = int(QRstr[2:len(QRstr)-1])
+        print(type(QRint))
+        return QRint
+
+    
 
 def getheartrate():
 # open the serial connetion, you'll need to find the port and baud rate
-    ser = serial.Serial('/dev/ttyUSB0', 9600)
+    ser = serial.Serial('/dev/ttyACM1', 9600)
     print("HR connection successful")
 # create an empty array
     RecentHrs = [0] * 10
@@ -60,6 +70,7 @@ def getheartrate():
     while True:
 # read the current line of the serial connection from the arduino
         serial_line = str(ser.readline())
+        time.sleep(0.1)
         size = len(serial_line)
         print(size)
         print(serial_line)
@@ -73,20 +84,22 @@ def getheartrate():
         RANGE = max(RecentHrs) - min(RecentHrs)
         print("Range is currently %s" % RANGE)
 # is the range less than two?
-        if RANGE < 5:
+        if RANGE < 5 and 50 < newSerial < 150:
 # count the data, close the serial connetion and return the most common HR value
-            data = Counter(RecentHrs)
+            data = mode(RecentHrs)
             ser.close()
-            return int(data.most_common)
+            print("The selected heart rate is: %s" % data)
+            return int(data)
         time.sleep(0.1)
 
 def MQTTsend(location, status, data):
 # turn the data into a string
-    pass
+    print("Sednding data to MQTT")
     MQQTString = str(location) + '-' + str(status) + '-' + str(data)
     mqttc = mqtt.Client("python_pub")
     mqttc.connect('localhost', 1883)
     mqttc.publish("homf/update", MQQTString)
+    print("Sccuess")
 
 # decide whether to load previously saved data
 if len(sys.argv) > 2:
@@ -110,11 +123,17 @@ while True:
         print("Jar detected")
 # read the QR on the heart
         scannedQR = QRread()
-        print("Successful scan, qr is %s" % scannedQR)
+        if scannedQR == False:
+            print("Remove and reposition your heart cell")
+            ldr.wait_for_light()
+            continue
+        else:
+            print("Successful scan, qr is %s" % scannedQR)
         for i in QRmap:
             if scannedQR == QRmap[i]:
-                #MQTTsend(i, 1, heartrate(i))
-                pass
+                print("Code repetition")
+                MQTTsend(i, 1, heartrate(i))
+                continue
             else:
 #loop until an empty cell is found
                 while True:
@@ -131,7 +150,8 @@ while True:
 # turn on the heart rate sensor Light
                 hrscannerlight.on()
 # get heart rate data
-                heartrate = getheartrate()
+                #heartrate = getheartrate()
+                heartrate = 75
                 print("We've got a heart rate = %s" % heartrate)
 # place the heart rate into the save file list
                 heartRateStore[INDEX] = heartrate
@@ -140,11 +160,16 @@ while True:
 # send the cell location, status and heart rate to the mqtt
                 MQTTsend ( location, 1, heartrate)
 # wait for the confirmation button to be pressed
+                print("Waiting for button")
                 heartButton.wait_for_press()
 # send the new status to the MQTT
+                print("Button pressed, sending confirmation")
                 MQTTsend ( location, 0, heartrate)
 # save the data to the revelant file
+                print("Dumping pickles")
                 pickle.dump(QRmap, open(qrsfilename, "wb"))
                 pickle.dump(heartRateStore, open(ratesfilename, "wb"))
+                print("Pickles have been dumped")
+                break
     else:
         print("Jar not detected")
