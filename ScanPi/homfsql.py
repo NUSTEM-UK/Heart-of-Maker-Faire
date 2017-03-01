@@ -16,7 +16,7 @@ def create_connection(db_file):
         print(e)
     return None
 
-def create_new_table(conn):
+def create_new_table(conn, populate):
     """ create a table from the create_table_sql statement
     :param conn: Connection object
     :param create_table_sql: a CREATE TABLE statement
@@ -29,11 +29,12 @@ def create_new_table(conn):
                                             qr_code integer,
                                             heart_rate integer
                                         ); """)
-        for i in range(512):
-            sql = ''' INSERT INTO heart_store(cell_id,qr_code,heart_rate)
-                          VALUES(?,?,?) '''
-            c.execute(sql, (i, 0, 0))
-            conn.commit()
+        if populate == True:
+            for i in range(512):
+                sql = ''' INSERT INTO heart_store(cell_id,qr_code,heart_rate)
+                              VALUES(?,?,?) '''
+                c.execute(sql, (i, 0, 0))
+        conn.commit()
 
     except Error as e:
         print(e)
@@ -69,25 +70,28 @@ def store_old_data(conn):
     # drop the old table
         c.execute(""" DROP TABLE heart_store""")
     # create a new table
-        create_new_table(conn)
+        create_new_table(conn, True)
         conn.commit()
     except:
+        print("error")
         pass
 
 def QR_usage_checker(conn, qrcode):
     try:
         c = conn.cursor()
-        c.execute("SELECT * FROM heart_store WHERE qr_code=?", (qrcode))
+        c.execute("SELECT * FROM heart_store WHERE qr_code=?", (qrcode,))
         row = c.fetchall()
-        return(True,row[0])
+        if not row:
+            return(True)
+        else:
+            return(False)
     except:
         pass
 
 def unique_cell_picker(conn):
     c = conn.cursor()
     c.execute("SELECT * FROM heart_store WHERE qr_code=0")
-    rows = cur.fetchall()
-    randomcell = random.randint(0,len(rows))
+    rows = c.fetchall()
+    randomcell = random.randint(0,len(rows)-1)
     chosen_row = rows[randomcell]
-    print(chosen_row[0])
     return(chosen_row[0])
