@@ -4,13 +4,13 @@ import zbarlight
 from gpiozero import LightSensor, LED, Button
 import serial
 import time
-from collections import Counter
+# from collections import Counter
 import sys, os
 import random
 import paho.mqtt.publish as publish
-import pickle
 import re # for turning the styring into a int
 from statistics import mode
+from homfsql import *
 
 # functions
 def QRread():

@@ -5,13 +5,11 @@ from PIL import Image
 import zbarlight
 from gpiozero import LightSensor, LED, Button
 import serial
-import sys, os
-import random
+import sys
 import paho.mqtt.publish as publish
-import pickle
-import re # for turning the string into a int
 from statistics import mode
-#from ScanPiModules import *
+from homfsql import *
+from heartprint import *
 
 # setup
 # setup for the PiCamera to record the QR codes
@@ -29,11 +27,11 @@ hrscannerlight = LED(27)
 # heart placed button on pin 4
 heartButton = Button(21)
 
-# set the filename of this run
-ratesfilename = "rates" + time.strftime("%Y%m%d-%H%M%S") + ".p"
-print("Rates Filename is %s" % ratesfilename)
-qrsfilename = "qrs" + time.strftime("%Y%m%d-%H%M%S") + ".p"
-print("QRs Filename is %s" % qrsfilename)
+# # set the filename of this run
+# ratesfilename = "rates" + time.strftime("%Y%m%d-%H%M%S") + ".p"
+# print("Rates Filename is %s" % ratesfilename)
+# qrsfilename = "qrs" + time.strftime("%Y%m%d-%H%M%S") + ".p"
+# print("QRs Filename is %s" % qrsfilename)
 
 # functions
 def QRread():
@@ -99,20 +97,15 @@ def MQTTsend(location, status, data):
     mqttc.connect('localhost', 1883)
     mqttc.publish("homf/update", MQQTString)
 
-# decide whether to load previously saved data
-if len(sys.argv) > 2:
-    print("Loading pickles")
-    QRmap = pickle.load(open(sys.argv[2], "rb"))
-    heartRateStore = pickle.load(open(sys.argv[3], "rb"))
-    for i in range(len(QRmap)):
-        MQTTsend( i, 2, heartRateStore[i])
-    print(QRmap)
-    print(heartRateStore)
-else:
-    QRmap = [0] * int(sys.argv[1])
-    print("QR Map created")
-    heartRateStore = [0] * int(sys.argv[1])
-    print("HR Store created")
+# connect to the SQL database
+conn = create_connection("homf.db")
+
+try:
+    loadNew = sys.argv[1]
+    if loadNew == "y":
+        store_old_data(conn)
+except:
+    print("No argument")
 
 while True:
     repeatcode = False
@@ -135,42 +128,25 @@ while True:
             print("Successful scan, qr is %s" % scannedQR)
 
         # check if we already have this HR stored
-        for i in QRmap:
-            if i == scannedQR:
-                print("Code repetition")
-                repeatcode = True
+        repeatcode = QR_usage_checker(conn, scannedQR)
 
         #loop until an empty cell is found
         if repeatcode == False:
-            while True:
-
-                #choose a random position in the map
-                INDEX = random.randint(0, len(QRmap)-1)
-
-                #check if that random position is empty (ie 0)
-                if QRmap[INDEX] == 0:
-
-                    #add the QR code to the position
-                    QRmap[INDEX] = scannedQR
-                    location = INDEX
-                    print(QRmap)
-                    for i in QRmap:
-                        print(i)
-                    break
+            cell_num = unique_cell_picker(conn)
+            update_heart(conn, cellnum, scannedQR, 0)
 
             # turn off the heart scanner Light
             qrscannerlight.off()
-
             # turn on the heart rate sensor Light
             hrscannerlight.on()
 
             # get heart rate data
             heartrate = getheartrate()
+            # update SQL avoiding corruption
+            update_heart(conn, cellnum, scannedQR, heartrate)
 
-            #heartrate = 75
             print("We've got a heart rate = %s" % heartrate)
-            # place the heart rate into the save file list
-            heartRateStore[INDEX] = heartrate
+
             # turn off the heart scanner light
             hrscannerlight.off()
             # send the cell location, status and heart rate to the mqtt
@@ -182,11 +158,9 @@ while True:
             print("Button pressed, sending confirmation")
             MQTTsend ( location, 0, heartrate)
             # save the data to the revelant file
-            print("Dumping pickles")
-            pickle.dump(QRmap, open(qrsfilename, "wb"))
-            pickle.dump(heartRateStore, open(ratesfilename, "wb"))
-            print("Pickles have been dumped")
+
         else:
+            # What do we do when we see a repeated code
             print("Do something")
     else:
         print("Jar not detected")

@@ -56,25 +56,25 @@ def update_heart(conn, cell, qr, hr):
     conn.commit()
 
 def store_old_data(conn):
-    tablename = "heart_store" + time.strftime("%m%d-%H%M%S")
+    tablename = "heart_store" + time.strftime("%M%S")
     # create an empty table
     try:
         c = conn.cursor()
-        c.execute(""" CREATE TABLE IF NOT EXISTS ? (
+
+        c.execute(""" CREATE TABLE IF NOT EXISTS """ + tablename + """ (
                                             cell_id integer,
                                             qr_code integer,
                                             heart_rate integer
-                                            ); """, tablename)
+                                            ); """)
     # insert the old data into the new table
-        c.execute(""" INSERT INTO ? SELECT * FROM heart_store""", tablename)
+        c.execute(""" INSERT INTO """ + tablename + """ SELECT * FROM heart_store""")
     # drop the old table
         c.execute(""" DROP TABLE heart_store""")
     # create a new table
         create_new_table(conn, True)
         conn.commit()
-    except:
-        print("error")
-        pass
+    except Error as e:
+        print(e)
 
 def QR_usage_checker(conn, qrcode):
     try:
