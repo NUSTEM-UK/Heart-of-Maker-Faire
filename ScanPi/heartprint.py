@@ -47,7 +47,3 @@ def qrprintout(heartRate, qrCode):
     printer.println("@thinkphysicsne")  #printing text
     printer.println("nustem.uk")  #printing text
     printer.feed(3)  #adding extra paper to come out of the printer
-    
-
-
-    

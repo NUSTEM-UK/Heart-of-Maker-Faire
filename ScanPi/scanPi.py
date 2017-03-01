@@ -70,18 +70,19 @@ def getheartrate():
             serial_line = str(ser.readline())
             time.sleep(0.1)
             size = len(serial_line)
+            # cut the unecessary gubbins off the  serial_line
             newSerial = int(serial_line[2:(size-5)])
             print("BPM %s" % newSerial)
-# add the new HR data to the end of the list
+            # add the new HR data to the end of the list
             RecentHrs.append(newSerial)
-# remove the oldest data from the list (first in the list)
+            # remove the oldest data from the list (first in the list)
             del RecentHrs[0]
-# find the range of the heart rate list
+            # find the range of the heart rate list
             RANGE = max(RecentHrs) - min(RecentHrs)
             print("Range is currently %s" % RANGE)
-# is the range less than three?
+            # is the range less than three?
             if RANGE < 3 and 50 < newSerial < 150:
-# count the data, close the serial connetion and return the most common HR value
+                # count the data, close the serial connetion and return the most common HR value
                 data = mode(RecentHrs)
                 ser.close()
                 print("The selected heart rate is: %s" % data)
@@ -133,7 +134,7 @@ while True:
         #loop until an empty cell is found
         if repeatcode == False:
             cell_num = unique_cell_picker(conn)
-            update_heart(conn, cellnum, scannedQR, 0)
+            update_heart(conn, cell_num, scannedQR, 0)
 
             # turn off the heart scanner Light
             qrscannerlight.off()
@@ -143,20 +144,22 @@ while True:
             # get heart rate data
             heartrate = getheartrate()
             # update SQL avoiding corruption
-            update_heart(conn, cellnum, scannedQR, heartrate)
+            update_heart(conn, cell_num, scannedQR, heartrate)
 
             print("We've got a heart rate = %s" % heartrate)
 
             # turn off the heart scanner light
             hrscannerlight.off()
             # send the cell location, status and heart rate to the mqtt
-            MQTTsend ( location, 1, heartrate)
+            MQTTsend (cell_num, 1, heartrate)
+
+            qrprintout(heartrate, scannedQR)
             # wait for the confirmation button to be pressed
             print("Waiting for button")
             heartButton.wait_for_press()
             # send the new status to the MQTT
             print("Button pressed, sending confirmation")
-            MQTTsend ( location, 0, heartrate)
+            MQTTsend (cell_num, 0, heartrate)
             # save the data to the revelant file
 
         else:
