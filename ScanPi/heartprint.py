@@ -37,8 +37,9 @@ def qrprintout(heartRate, qrCode):
     printer.println("\n")  #creating a space between text
 
     #Print QR code
+    datanumb = "data" + str(qrCode)
     import gfx.adaqrcode as adaqrcode  #importing qr code
-    printer.printBitmap(adaqrcode.width, adaqrcode.height, adaqrcode.data)  #printing qr code
+    printer.printBitmap(adaqrcode.width, adaqrcode.height, getattr(adaqrcode, datanumb))  #printing qr code
 
     #get in touch
     printer.setLineHeight(10)  #setting spaze size
@@ -47,3 +48,5 @@ def qrprintout(heartRate, qrCode):
     printer.println("@thinkphysicsne")  #printing text
     printer.println("nustem.uk")  #printing text
     printer.feed(3)  #adding extra paper to come out of the printer
+    
+qrprintout(50,1)
