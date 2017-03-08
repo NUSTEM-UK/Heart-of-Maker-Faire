@@ -1,13 +1,14 @@
 from gpiozero import LightSensor
 
 
-ldr = LightSensor(18, charge_time_limit=0.3, threshold=0.2)
+ldr = LightSensor(12, charge_time_limit=0.2, threshold=0.5)
 
 def main():
-    if (ldr.light_detected == False):
-        print("Light sensor is covered")
+    if (ldr.light_detected == True):
+        print("Light")
     else:
-        print("Light sensory is covered")
+        print("Dark")
 
 if __name__ == '__main__':
-    main()
+    while True:
+        main()

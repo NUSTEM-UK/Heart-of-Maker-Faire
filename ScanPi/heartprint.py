@@ -49,4 +49,8 @@ def qrprintout(heartRate, qrCode):
     printer.println("nustem.uk")  #printing text
     printer.feed(3)  #adding extra paper to come out of the printer
     
-qrprintout(50,1)
+def main():
+    qrprintout(50,2)
+    
+if __name__ == '__main__':
+    main()

@@ -79,11 +79,15 @@ def store_old_data(conn):
 def QR_usage_checker(conn, qrcode):
     try:
         c = conn.cursor()
+        print("THIS BIT IS HAPPENING")
         c.execute("SELECT * FROM heart_store WHERE qr_code=?", (qrcode,))
         row = c.fetchall()
+        print(row)
         if not row:
+            print("UNIQUE")
             return(True)
         else:
+            print("NOT UNIQUE")
             return(False)
     except:
         pass

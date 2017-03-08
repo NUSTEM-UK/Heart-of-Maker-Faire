@@ -6,10 +6,11 @@ import zbarlight
 from gpiozero import LightSensor, LED, Button
 import serial
 import sys
-import paho.mqtt.publish as publish
+import paho.mqtt.client as mqtt
 from statistics import mode
 from homfsql import *
-from heartprint import *
+#from heartprint import *
+from Adafruit_Thermal import *
 
 # setup
 # setup for the PiCamera to record the QR codes
@@ -20,25 +21,19 @@ file_path = "newQR.png"
 # setup the LDR to detect presence of a heart
 # the sensor is on Pin19, a charge_time_limit is chosen to suit the capacitor (220uF)
 # the threshold ensures the clear jar can be detected
-ldr = LightSensor(18, charge_time_limit=0.3, threshold = 0.2)
+ldr = LightSensor(12, charge_time_limit=0.2, threshold = 0.5)
 # these LEDS (on Pin17,16) represent the relays controlling illumination at the stations
 qrscannerlight = LED(17)
 hrscannerlight = LED(27)
 # heart placed button on pin 4
 heartButton = Button(21)
 
-# # set the filename of this run
-# ratesfilename = "rates" + time.strftime("%Y%m%d-%H%M%S") + ".p"
-# print("Rates Filename is %s" % ratesfilename)
-# qrsfilename = "qrs" + time.strftime("%Y%m%d-%H%M%S") + ".p"
-# print("QRs Filename is %s" % qrsfilename)
-
 # functions
 def QRread():
 # take image of the QR code and save
     print("Capturing  image")
     camera.capture("newQR.png")
-    print("Image caputred")
+    print("Image captured")
 # open the image file for use by zbarlight
     with open(file_path, 'rb') as image_file:
         image = Image.open(image_file)
@@ -53,12 +48,11 @@ def QRread():
     else:
         QRstr = str(code[0])
         QRint = int(QRstr[2:len(QRstr)-1])
-        print(type(QRint))
         return QRint
 
 def getheartrate():
 # open the serial connetion, you'll need to find the port and baud rate
-    ser = serial.Serial('/dev/ttyACM1', 9600)
+    ser = serial.Serial('/dev/ttyACM0', 9600)
     print("HR connection successful")
 # create an empty array
     RecentHrs = [0] * 5
@@ -104,6 +98,7 @@ conn = create_connection("homf.db")
 try:
     loadNew = sys.argv[1]
     if loadNew == "y":
+        print("Storing old data")
         store_old_data(conn)
 except:
     print("No argument")
@@ -130,9 +125,9 @@ while True:
 
         # check if we already have this HR stored
         repeatcode = QR_usage_checker(conn, scannedQR)
-
+        print(repeatcode)
         #loop until an empty cell is found
-        if repeatcode == False:
+        if repeatcode == True:
             cell_num = unique_cell_picker(conn)
             update_heart(conn, cell_num, scannedQR, 0)
 
@@ -153,10 +148,10 @@ while True:
             # send the cell location, status and heart rate to the mqtt
             MQTTsend (cell_num, 1, heartrate)
 
-            qrprintout(heartrate, scannedQR)
+            #qrprintout(heartrate, scannedQR)
             # wait for the confirmation button to be pressed
             print("Waiting for button")
-            heartButton.wait_for_press()
+            # heartButton.wait_for_press()
             # send the new status to the MQTT
             print("Button pressed, sending confirmation")
             MQTTsend (cell_num, 0, heartrate)
