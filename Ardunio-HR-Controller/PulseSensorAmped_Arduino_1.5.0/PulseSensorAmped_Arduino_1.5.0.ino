@@ -30,6 +30,9 @@ volatile boolean Pulse = false;     // "True" when User's live heartbeat is dete
 volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 
 // SET THE SERIAL OUTPUT TYPE TO YOUR NEEDS
+/*Code heavily adapted from the PulseSenosr code, see link below. Smoothing applied to 
+adjust for earthing prblems when an arduino is connected to the raspberry pi*/
+
 // PROCESSING_VISUALIZER works with Pulse Sensor Processing Visualizer
 //      https://github.com/WorldFamousElectronics/PulseSensor_Amped_Processing_Visualizer
 // SERIAL_PLOTTER outputs sensor data for viewing with the Arduino Serial Plotter
@@ -51,27 +54,18 @@ void setup(){
 //  Where the Magic Happens
 void loop(){
 
-   // serialOutput() ;
 
   if (QS == true){     // A Heartbeat Was Found
                        // BPM and IBI have been Determined
                        // Quantified Self "QS" true when arduino finds a heartbeat
-        fadeRate = 255;         // Makes the LED Fade Effect Happen
-                                // Set 'fadeRate' Variable to 255 to fade LED with pulse
-        serialOutputWhenBeatHappens();   // A Beat Happened, Output that to serial.
+
+        if (BPM > 40 && BPM < 220){
+          Serial.println(BPM);    
+        }
+
         QS = false;                      // reset the Quantified Self flag for next time
   }
 
-  ledFadeToBeat();                      // Makes the LED Fade Effect Happen
   delay(20);                             //  take a break
 }
 
-
-
-
-
-void ledFadeToBeat(){
-    fadeRate -= 15;                         //  set LED fade value
-    fadeRate = constrain(fadeRate,0,255);   //  keep LED fade value from going into negative numbers!
-    analogWrite(fadePin,fadeRate);          //  fade LED
-  }
