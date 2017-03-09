@@ -34,7 +34,7 @@ gapX = 63.3
 gapY = 76.587
 
 # set the number of paired stickers you wish to create
-stickerNum = int(raw_input("How many stickers would you like to make?"))
+stickerNum = int(input("How many stickers would you like to make?"))
 
 # create the PDF canvas
 c = canvas.Canvas("QRstickers-%s.pdf" % stickerNum)

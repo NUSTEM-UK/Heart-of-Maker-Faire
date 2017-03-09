@@ -1,126 +1,165 @@
-# load all the necessary modules
-from gpiozero import LightSensor
-from picamera.array import PiRGBArray
-from picamera import PiCamera
+# modules
 import time
-import cv2
+from picamera import *
 from PIL import Image
 import zbarlight
+from gpiozero import LightSensor, LED, Button
 import serial
+import sys
 import paho.mqtt.client as mqtt
+from statistics import mode
+from homfsql import *
+#from heartprint import *
+from Adafruit_Thermal import *
 
-# decide whether to load previously saved data
-#loadSavedData = raw_input("Do you wish to load previous data? y/n ")
-
-# If saved data is to be loaded do...
-#if loadSaved == 'y':
-
-# input the total number of space in the Heart of Maker Faire
-totalHearts = int(raw_input("What is the total number of heart cells?  "))
-# Create the empty list HeartQR to store the QR mapping
-heartCells = [0] * totalHearts
-# Create the list emptyCells that will store any remaining empty cells
-emptyCells = []
-#fill them with the values 0 - totalHearts
-for i in range(0,totalHearts):
-    EmptyCells.append(i)
-
-# setup the LDR to detect presence of a heart
-# the sensor is on Pin19, a charge_time_limit is chosen to suit the capacitor (220uF)
-# the threshold ensures the clear jar can be detected
-ldr = LightSensor(19, charge_time_limit=0.3, threshold = 0.2)
-
+# setup
 # setup for the PiCamera to record the QR codes
 camera = PiCamera()
 camera.resolution = (1024, 768)
 file_path = "newQR.png"
 
-# Setup the Serial read to get HR from Arduino, adjust to suit settings
-ser = serial.Serial('/dev/ttyUSB0', 9600)
-
-# tell the code to check for a new heart placed on the LDR
-QRdetect = True
-# set the newQR checker to True,
-newQR = True
-
-# open the main loop
-while True:
-# three things can happen here:
-# 2. the heart can now be removed
-# 3. no heart is detected
-    # 1. a new heart is detected
-    if (ldr.light_detected == False) and (QRdetect == True):
-        newQR = True
-        detect = False
-
-        # read the QR code
-        QRread()
-
-        # check if the code is already logged
-        for i in heartCells:
-            if code == i:
-                print("We've already had this code")
-                newQR = False
-
-        # if QR is new
-        if newQR == True:
-            #check if there are any spaces left
-            if not emptyCells:
-                break
-            else:
-                # choose a random empty cell from the list
-                heartPosition = random.choice(emptyCells)
-                # remove the position from emptyCells to avoid repetition
-                emptyCells.remove(heartPosition)
-                # assign the QR code to the new position
-                heartCells[heartPosition] = code
-
-                # now get the heart rate data from Serial or MQTT
-                HRgetter()
-
-                # turn the thee values to a string
-                MQTTHeartString(position, 1, newHR)
-                # now push the heartPosition, HeartRate and, status code to MQTT
-                mqttc = mqtt.Client("python_pub")
-                mqttc.connect('localhost', 1883)
-                mqttc.publish("homf/update", MQQTString)
-
-                # wait for comfirmation of placed heart via push button or timeout
-
-        elif newQR == False:
-                # send data to MQTT to have the
-                break
-
-
-
-
+# setup the LDR to detect presence of a heart
+# the sensor is on Pin19, a charge_time_limit is chosen to suit the capacitor (220uF)
+# the threshold ensures the clear jar can be detected
+ldr = LightSensor(12, charge_time_limit=0.2, threshold = 0.5)
+# these LEDS (on Pin17,16) represent the relays controlling illumination at the stations
+qrscannerlight = LED(17)
+hrscannerlight = LED(27)
+# heart placed button on pin 4
+heartButton = Button(21)
 
 # functions
-def QRread ():
-    # take image of the QR code and save
+def QRread():
+# take image of the QR code and save
+    print("Capturing  image")
     camera.capture("newQR.png")
-    # open the image file for use by zbarlight
+    print("Image captured")
+# open the image file for use by zbarlight
     with open(file_path, 'rb') as image_file:
         image = Image.open(image_file)
         image.load()
-    # use zbarlight to scan the QR image for codes
+# use zbarlight to scan the QR image for codes
     code = zbarlight.scan_codes('qrcode', image)
-    return code
 
-def HRgetter ():
-    # instructions for getting the HR from Arduino go here.
-    stringHR = ser.readline()
-    newHR = [int(s) for s in re.findall(r'\d+', stringHR)]
-    if 40 < newHR < 180:
-        return newHR
-    elif newHR == 0:
-        # some reset code
-        
+    if code is None:
+        print("QR code is None Type")
+        return False
+
     else:
-        #some sort of error
-        
+        QRstr = str(code[0])
+        QRint = int(QRstr[2:len(QRstr)-1])
+        return QRint
 
+def getheartrate():
+# open the serial connetion, you'll need to find the port and baud rate
+    ser = serial.Serial('/dev/ttyACM0', 9600)
+    print("HR connection successful")
+# create an empty array
+    RecentHrs = [0] * 5
+    print(RecentHrs)
+    while True:
+# read the current line of the serial connection from the arduino
 
-def MQTTHeartString (location, status, data):
+        try:
+            serial_line = str(ser.readline())
+            time.sleep(0.1)
+            size = len(serial_line)
+            # cut the unecessary gubbins off the  serial_line
+            newSerial = int(serial_line[2:(size-5)])
+            print("BPM %s" % newSerial)
+            # add the new HR data to the end of the list
+            RecentHrs.append(newSerial)
+            # remove the oldest data from the list (first in the list)
+            del RecentHrs[0]
+            # find the range of the heart rate list
+            RANGE = max(RecentHrs) - min(RecentHrs)
+            print("Range is currently %s" % RANGE)
+            # is the range less than three?
+            if RANGE < 3 and 50 < newSerial < 150:
+                # count the data, close the serial connetion and return the most common HR value
+                data = mode(RecentHrs)
+                ser.close()
+                print("The selected heart rate is: %s" % data)
+                return int(data)
+            time.sleep(0.1)
+        except ValueError:
+            print("oops")
+
+def MQTTsend(location, status, data):
+    # turn the data into a string
     MQQTString = str(location) + '-' + str(status) + '-' + str(data)
-    return MQQTString
+    mqttc = mqtt.Client("python_pub")
+    mqttc.connect('localhost', 1883)
+    mqttc.publish("homf/update", MQQTString)
+
+# connect to the SQL database
+conn = create_connection("homf.db")
+
+try:
+    loadNew = sys.argv[1]
+    if loadNew == "y":
+        print("Storing old data")
+        store_old_data(conn)
+except:
+    print("No argument")
+
+while True:
+    repeatcode = False
+    # turn on heart scanner light
+    print("Turning light on...")
+    time.sleep(0.5)
+    qrscannerlight.on()
+
+    # wait for a heart to be placed
+    if (ldr.light_detected == False):
+        print("Jar detected")
+
+        # read the QR on the heart
+        scannedQR = QRread()
+        if scannedQR == False:
+            print("Remove and reposition your heart cell")
+            ldr.wait_for_light()
+            continue
+        else:
+            print("Successful scan, qr is %s" % scannedQR)
+
+        # check if we already have this HR stored
+        repeatcode = QR_usage_checker(conn, scannedQR)
+        print(repeatcode)
+        #loop until an empty cell is found
+        if repeatcode == True:
+            cell_num = unique_cell_picker(conn)
+            update_heart(conn, cell_num, scannedQR, 0)
+
+            # turn off the heart scanner Light
+            qrscannerlight.off()
+            # turn on the heart rate sensor Light
+            hrscannerlight.on()
+
+            # get heart rate data
+            heartrate = getheartrate()
+            # update SQL avoiding corruption
+            update_heart(conn, cell_num, scannedQR, heartrate)
+
+            print("We've got a heart rate = %s" % heartrate)
+
+            # turn off the heart scanner light
+            hrscannerlight.off()
+            # send the cell location, status and heart rate to the mqtt
+            MQTTsend (cell_num, 1, heartrate)
+
+            #qrprintout(heartrate, scannedQR)
+            # wait for the confirmation button to be pressed
+            print("Waiting for button")
+            # heartButton.wait_for_press()
+            # send the new status to the MQTT
+            print("Button pressed, sending confirmation")
+            MQTTsend (cell_num, 0, heartrate)
+            # save the data to the revelant file
+
+        else:
+            # What do we do when we see a repeated code
+            print("Do something")
+    else:
+        print("Jar not detected")
+    print("End of loop")
