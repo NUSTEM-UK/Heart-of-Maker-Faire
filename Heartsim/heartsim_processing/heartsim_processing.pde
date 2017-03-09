@@ -68,7 +68,7 @@ void setup() {
     // Connect to MQTT server, identifying this client ID as heartsim
     client.connect("mqtt://localhost", "heartsim");
     // Subscribe to the /heart topic
-    client.subscribe("/heart");
+    client.subscribe("heart/#");
     // client.subscribe(".heart", int qos);
 
 
