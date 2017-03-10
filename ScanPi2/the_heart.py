@@ -4,7 +4,6 @@ from homf-neos import *
 from homf-printing import *
 from homf-rateget import *
 from homf-scanning import *
-
 from gpiozero import LightSensor # The gpio Lightsensor
 
 def main():
@@ -36,3 +35,9 @@ def main():
                 qrprintout(heartrate, scannedQR)
             else:
                 pass
+
+if __name__ - "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        setColour('black', 1, True)
