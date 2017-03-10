@@ -12,6 +12,8 @@ from homfsql import *
 #from heartprint import *
 from Adafruit_Thermal import *
 from homf_neopixels import *
+from neopixel import *
+from pulsevalues import frames
 
 # setup
 # setup for the PiCamera to record the QR codes
@@ -22,6 +24,20 @@ file_path = "newQR.png"
 # get the initial programme start time for our delay-less Neopixel update
 last_time_checked = int(round(time.time()*1000))
 frame = 0
+
+#setup the neo pixel strip
+# LED strip configuration:
+LED_COUNT      = 8      # Number of LED pixels.
+LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
+LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
+LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
+LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
+LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+
+#set up the neopixel strip
+strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
+# Intialize the library (must be called once before other functions).
+strip.begin()
 
 # setup the LDR to detect presence of a heart
 # the sensor is on Pin19, a charge_time_limit is chosen to suit the capacitor (220uF)
@@ -111,14 +127,18 @@ except:
 while True:
     repeatcode = False
     # turn on heart scanner light
-    print("Turning light on...")
-    time.sleep(0.5)
     qrscannerlight.on()
     last_time_checked, frame = pulselight(last_time_checked, frame)
+    for i in range(8):
+        strip.setPixelColor(i, Color(255, 0, 0))
+    strip.setBrightness(frames[int(frame)])
+    strip.show()
     # wait for a heart to be placed
     if (ldr.light_detected == False):
         print("Jar detected")
-
+        for i in range(8):
+            strip.setPixelColor(i, Color(0, 0, 0))
+        strip.show()
         # read the QR on the heart
         scannedQR = QRread()
         if scannedQR == False:
@@ -166,5 +186,6 @@ while True:
             # What do we do when we see a repeated code
             print("Do something")
     else:
-        print("Jar not detected")
-    print("End of loop")
+        pass
+        #print("Jar not detected")
+    #print("End of loop")
