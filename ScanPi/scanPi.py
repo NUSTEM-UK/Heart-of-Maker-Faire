@@ -11,12 +11,17 @@ from statistics import mode
 from homfsql import *
 #from heartprint import *
 from Adafruit_Thermal import *
+from homf_neopixels import *
 
 # setup
 # setup for the PiCamera to record the QR codes
 camera = PiCamera()
 camera.resolution = (1024, 768)
 file_path = "newQR.png"
+
+# get the initial programme start time for our delay-less Neopixel update
+last_time_checked = int(round(time.time()*1000))
+frame = 0
 
 # setup the LDR to detect presence of a heart
 # the sensor is on Pin19, a charge_time_limit is chosen to suit the capacitor (220uF)
@@ -109,7 +114,7 @@ while True:
     print("Turning light on...")
     time.sleep(0.5)
     qrscannerlight.on()
-
+    last_time_checked, frame = pulselight(last_time_checked, frame)
     # wait for a heart to be placed
     if (ldr.light_detected == False):
         print("Jar detected")
