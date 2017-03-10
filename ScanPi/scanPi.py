@@ -15,39 +15,13 @@ from homf_neopixels import *
 from neopixel import *
 from pulsevalues import frames
 
-# setup
-# setup for the PiCamera to record the QR codes
-camera = PiCamera()
-camera.resolution = (1024, 768)
-file_path = "newQR.png"
+
 
 # get the initial programme start time for our delay-less Neopixel update
 last_time_checked = int(round(time.time()*1000))
 frame = 0
 
-#setup the neo pixel strip
-# LED strip configuration:
-LED_COUNT      = 8      # Number of LED pixels.
-LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
-LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
-LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
-LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 
-#set up the neopixel strip
-strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
-# Intialize the library (must be called once before other functions).
-strip.begin()
-
-# setup the LDR to detect presence of a heart
-# the sensor is on Pin19, a charge_time_limit is chosen to suit the capacitor (220uF)
-# the threshold ensures the clear jar can be detected
-ldr = LightSensor(12, charge_time_limit=0.2, threshold = 0.5)
-# these LEDS (on Pin17,16) represent the relays controlling illumination at the stations
-qrscannerlight = LED(17)
-hrscannerlight = LED(27)
-# heart placed button on pin 4
-heartButton = Button(21)
 
 # functions
 def QRread():
