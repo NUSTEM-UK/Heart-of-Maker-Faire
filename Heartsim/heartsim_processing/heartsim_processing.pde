@@ -87,13 +87,16 @@ void draw() {
         hearts[i].display();
     }
 
+    // Following test code commented out, since we're now able to command the
+    // simulation from MQTT.
+
     // Set rate and colour of random cell, every 2 seconds
-    if (frameCount % int(random(15, 45)) == 0) {
-        int targetHeart = int(random(numHearts));
-        // hearts[targetHeart].setColour(random(255), 10.0);
-        hearts[targetHeart].setColour(0, 6.0);
-        hearts[targetHeart].setRate(random(30, 160));
-    }
+    // if (frameCount % int(random(15, 45)) == 0) {
+    //     int targetHeart = int(random(numHearts));
+    //     // hearts[targetHeart].setColour(random(255), 10.0);
+    //     hearts[targetHeart].setColour(0, 6.0);
+    //     hearts[targetHeart].setRate(random(30, 160));
+    // }
 
     // If we're badly dropping frames, tell the console
     if (frameRate < 58 ) {
@@ -105,5 +108,44 @@ void draw() {
 
 void messageReceived(String topic, byte[] payload) {
     println("new message: " + topic + " - " + new String(payload));
-    // TODO: parse and act on received messages.
+
+    // Tokenise the topic string by splitting it on '/'
+    String[] topicParts = topic.split("/");
+    // Convert the payload to a String. We're not overly-worried about performance,
+    // and this is easy. We may revisit later, however.
+    String payloadString = new String(payload);
+
+    // Parse commands.
+    // First check if the topic is long enough to contain a valid command
+    if (topicParts.length > 2) {
+      // Work out to which heart we're speaking
+      int heartNum = Integer.parseInt(topicParts[1]);
+      // ...and the command we're sending it
+      String command = topicParts[2];
+
+      // Handle setMode = update
+      if (command.equals("setMode")) {
+        if (payloadString.equals("update")) {
+          // Set random colour for this heart
+          hearts[heartNum].setColour(random(255), 1.0);
+        }
+      }
+
+      // Handle setRate command
+      if (command.equals("setRate")) {
+        println("### Command Heart #" + heartNum + " to setRate: " + Integer.parseInt(payloadString) );
+        hearts[heartNum].setRate(Integer.parseInt(payloadString));
+      }
+
+      // Handle setMode = clear
+      if (command.equals("setMode")) {
+        if (payloadString.equals("clear")) {
+          // Change the colour to red over 5 seconds
+          hearts[heartNum].setColour(0.0, 5.0);
+          // Could send an acknowledgement here
+        }
+      }
+
+    }
+
 }
