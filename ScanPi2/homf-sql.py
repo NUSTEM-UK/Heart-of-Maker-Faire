@@ -1,21 +1,31 @@
 import sqlite3
 from sqlite3 import Error
+
+import MySQLdb
+
 import random
 import time
 import sys
 
-def create_connection(db_file):
-    """ create a database connection to the SQLite database
-        specified by db_file
-    :param db_file: database file
-    :return: Connection object or None
-    """
-    try:
-        conn = sqlite3.connect(db_file)
-        return conn
-    except Error as e:
-        print(e)
-    return None
+host = "localhost"
+user = "testuser"
+password = "userpassword"
+database = "databasename"
+
+
+
+# def create_connection(db_file):
+#     """ create a database connection to the SQLite database
+#         specified by db_file
+#     :param db_file: database file
+#     :return: Connection object or None
+#     """
+#     try:
+#         conn = sqlite3.connect(db_file)
+#         return conn
+#     except Error as e:
+#         print(e)
+#     return None
 
 def create_new_table(conn, populate):
     """ create a table from the create_table_sql statement
@@ -101,7 +111,10 @@ def unique_cell_picker(conn):
     chosen_row = rows[randomcell]
     return(chosen_row[0])
 
-conn = create_connection("homf.db") # SQL database connection
+try:
+    conn = MySQLdb.connect(host,user,password,database)
+except:
+    conn = sqlite3.connect(database)
 
 loadNew = sys.argv[1]     # check command line arguments
 try:

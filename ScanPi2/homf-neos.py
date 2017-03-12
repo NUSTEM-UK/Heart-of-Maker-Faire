@@ -126,3 +126,22 @@ def setColour(colour, location, show): # colour 'red', 'blue', 'green', 'black'
         strip.show()
     else:
         pass
+
+if __name__ == '__main__':
+    print("Testing the millis() function...")
+    current_time = millis()
+    print("Current time is %s" % current_time)
+    print("")
+    print("Testing the pulse feedback() function")
+    pulses = [60,50,40,30,20,10,5,4,3,2]
+    for i in pulses:
+        pulsefeedback(i)
+        time.sleep(1)
+    print("Test complete")
+    print("")
+    print("Testing the setColour() function
+    colours = ['red', 'blue', 'green', 'black']
+    for i in colours:
+        setColour(i, 1, True)
+        time.sleep(1)
+    print("Colour test complete")

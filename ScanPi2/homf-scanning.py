@@ -18,3 +18,6 @@ def QRread():
         QRstr = str(code[0])
         QRint = int(QRstr[2:len(QRstr)-1])
         return QRint
+
+if __name__ == '__main__':
+    print(QRread())

@@ -3,14 +3,19 @@ import time
 from homf-neos import *
 from statistics import mode
 
+ser = serial.Serial()
+ser.baudrate = 9600
+ser.port = '/dev/ttyACM0'
+
 
 def getheartrate():
-    ser = serial.Serial('/dev/ttyACM0', 9600)
+    ser.open()
     RecentHrs = [0] * 5
     while True:
         try:
             serial_line = str(ser.readline())
             newSerial = int(serial_line[2:(len(serial_line)-5)])# cut the unecessary gubbins off the  serial_line
+            print(newSerial)
             RecentHrs.append(newSerial) # add the new HR data to the end of the list
             del RecentHrs[0] # remove the oldest data from the list (first in the list)
             RANGE = max(RecentHrs) - min(RecentHrs) # find the range of the heart rate list
@@ -25,3 +30,9 @@ def getheartrate():
             time.sleep(0.1)
         except ValueError: # mitigate for serial errors
             pass
+
+if __name__ == '__main__':
+    try:
+        getheartrate()
+    except:
+        print("Error")
