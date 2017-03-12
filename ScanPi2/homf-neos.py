@@ -17,7 +17,7 @@ def millis():   # a function to return the current time in millis
     millis = int(round(time.time()*1000))
     return millis
 
-def pulsefeedback (spread):
+def pulsefeedback (strip, spread):
     for i in range(8):
         strip.setPixelColor(i, Color(0,0,0))
     if spread < 60:
@@ -63,7 +63,7 @@ def pulsefeedback (spread):
             strip.setPixelColor(i, Color(0,255,0))
     strip.show()
 
-def pulselight(lasttime, count):
+def pulselight(strip, lasttime, count):
     current_time = millis()
     #what is the elapsed time
     elap_time = current_time - lasttime
@@ -80,7 +80,7 @@ def pulselight(lasttime, count):
     strip.show()
     return current_time, new_count
 
-def setColour(colour, location, show): # colour 'red', 'blue', 'green', 'black'
+def setColour(strip, colour, location, show): # colour 'red', 'blue', 'green', 'black'
     strip.setBrightness(255)
     if location == 1:
         if colour == 'red':
@@ -135,13 +135,13 @@ if __name__ == '__main__':
     print("Testing the pulse feedback() function")
     pulses = [60,50,40,30,20,10,5,4,3,2]
     for i in pulses:
-        pulsefeedback(i)
+        pulsefeedback(strip, i)
         time.sleep(1)
     print("Test complete")
     print("")
     print("Testing the setColour() function
     colours = ['red', 'blue', 'green', 'black']
     for i in colours:
-        setColour(i, 1, True)
+        setColour(strip, i, 1, True)
         time.sleep(1)
     print("Colour test complete")
