@@ -66,7 +66,7 @@ void setup() {
     // See https://github.com/256dpi/processing-mqtt
     client = new MQTTClient(this);
     // Connect to MQTT server, identifying this client ID as heartsim
-    client.connect("mqtt://localhost", "heartsim");
+    client.connect("mqtt://192.168.1.1", "heartsim");
     // Subscribe to the /heart topic
     client.subscribe("heart/#");
     // client.subscribe(".heart", int qos);

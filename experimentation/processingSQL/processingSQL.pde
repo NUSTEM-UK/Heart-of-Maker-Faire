@@ -10,7 +10,7 @@ void setup() {
   String user = "root";
   String pass = "plokij";
 
-  String server = "192.168.0.28";
+  String server = "192.168.1.1";
   String dbname = "Heart";
 
   mysql = new MySQL( this, server, dbname, user, pass );

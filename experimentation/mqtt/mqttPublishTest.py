@@ -11,7 +11,7 @@ qos = 1
 hiccup = 0.01
 
 client = mqtt.Client()
-client.connect("localhost")
+client.connect("192.168.1.1")
 
 # This call threads off the broker connection and leaves it open,
 # which neatly avoids the issue (in much example code) of having
