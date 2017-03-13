@@ -12,11 +12,13 @@ def MQTTsend(location, status, data):
     # turn the data into a string
     # heart/[heartnum]/setMode
     # heart/[heartnum]/setrate
-    setModeString = "heart/"+str(0)+str(location)+"/setMode"
-    setRateString = "heart/"+str(0)+str(location)+"/setRate"
+    setModeString = "heart/"+str(location).zfill(3)+"/setMode" # zfill adds leading zeros
+    setRateString = "heart/"+str(location).zfill(3)+"/setRate"
 
-    MQQTString = str(location) + '-' + str(status) + '-' + str(data)
-    client.publish("homf/update", MQQTString)
+    client.publish(setModeString, status, 1)
+    time.sleep(0.01)
+    client.publish(setRateString, data, 1)
+    time.sleep(0.01)
 
 if __name__ == '__main__':
     print("Sending data...")

@@ -1,17 +1,48 @@
-"""Dependencies
-apt-get install python3-dev ???
-pip3 install mysqlclient
-"""
+""" These functions allow the two scanning units to access an SQL database served on
+a Pi ZERO W, this ensure that no duplications of cell locations can occur. """
 import MySQLdb
-
 import random
 import time
 import sys
 
+# set access details for the SQL db
 host = "192.168.1.1"
 user = "root"
 password = "plokij"
 database = "Heart"
+
+def create_heartwatch_table(conn):
+    c = conn.cursor()
+    c.execute("""DROP TABLE IF EXISTS heart_watch""")
+    c.execute("""CREATE TABLE IF NOT EXISTS heart_watch
+                (colour char(20), status int)""")
+    colours = ["green", "yellow", 'purple', 'cyan']
+    for i in colours:
+        c.execute(""" INSERT INTO heart_watch (colour, status)
+                    VALUES ('%s', '%d')""" % (i, 0))
+    conn.commit()
+
+def watch_colour_picker(conn):
+    #First select a currently unused colour
+    c = conn.cursor()
+    c.execute("""SELECT * FROM heart_watch WHERE status = 0""")
+    rows = c.fetchall()
+    if not rows: # if all four colurs have been chosen return False
+        return False
+    randomChoice = random.randint(0, len(rows)-1)
+    chosenRow = rows[randomChoice]
+    chosenColour = chosenRow[0]
+
+    # Lock in that colour choice
+    c.execute("""UPDATE heart_watch SET status = 1 WHERE
+                colour = %s""" % chosenColour )
+    conn.commit()
+    return chosenColour
+
+def watch_colour_reset(conn, colour):
+    c = conn.cursor()
+    c.execute("""UPDATE heart_watch SET status = 0 WHERE colour = %s""" % colour)
+    conn.commit()
 
 def create_new_table(conn, populate):
     try:
