@@ -26,12 +26,12 @@ maxY = 10
 maxX = 8
 
 # set the first coordinate position of the bottom left QR coordinate in pts
-initX = 31
-initY = 65.7
+initX = 30.85
+initY = 61.76
 
 # set the gap in pts between the bottom left corner of each image to be displayed
-gapX = 63.3
-gapY = 76.587
+gapX = 62.64
+gapY = 76.28
 
 # set the number of paired stickers you wish to create
 stickerNum = int(input("How many stickers would you like to make?"))
