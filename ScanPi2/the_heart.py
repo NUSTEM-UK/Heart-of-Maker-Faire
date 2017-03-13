@@ -1,9 +1,9 @@
 import time
-from homf-mqtt import *
-from homf-neos import *
-from homf-printing import *
-from homf-rateget import *
-from homf-scanning import *
+from mqtthomf import *
+from neoshomf import *
+from printerhomf import *
+from rategethomf import *
+from scanninghomf import *
 from gpiozero import LightSensor # The gpio Lightsensor
 
 def main():

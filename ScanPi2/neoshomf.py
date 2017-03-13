@@ -1,9 +1,9 @@
 import time
 from neopixel import *
-from homf-pulsevalues import frames
+from pulsevalueshomf import *
 
 # LED strip configuration:
-LED_COUNT      = 8      # Number of LED pixels.
+LED_COUNT      = 16      # Number of LED pixels.
 LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
@@ -20,44 +20,24 @@ def millis():   # a function to return the current time in millis
 def pulsefeedback (strip, spread):
     for i in range(8):
         strip.setPixelColor(i, Color(0,0,0))
-    if spread < 60:
-        for i in range(8,9)
-        strip.setPixelColor(i, Color(255,0,0))
-        for i in range(9,16):
-            strip.setPixelColor(i, Color(0,255,0))
-    elif spread < 50:
-        for i in range(8,10)
-        strip.setPixelColor(i, Color(255,0,0))
+    if 30 <= spread < 60:
+        for i in range(8,10):
+            strip.setPixelColor(i, Color(255,0,0))
         for i in range(10,16):
             strip.setPixelColor(i, Color(0,255,0))
-    elif spread < 30:
-        for i in range(8,11)
-        strip.setPixelColor(i, Color(255,0,0))
-        for i in range(11,16):
-            strip.setPixelColor(i, Color(0,255,0))
-    elif spread < 20:
-        for i in range(8,12)
-        strip.setPixelColor(i, Color(255,0,0))
+    elif 10 <= spread < 30:
+        for i in range(8,12):
+            strip.setPixelColor(i, Color(255,0,0))
         for i in range(12,16):
             strip.setPixelColor(i, Color(0,255,0))
-    elif spread < 10:
-        for i in range(8,13)
-        strip.setPixelColor(i, Color(255,0,0))
-        for i in range(13,16):
-            strip.setPixelColor(i, Color(0,255,0))
-    elif spread < 5:
-        for i in range(8,14)
-        strip.setPixelColor(i, Color(255,0,0))
+    elif 3 <= spread < 10:
+        for i in range(8,14):
+            strip.setPixelColor(i, Color(255,0,0))
         for i in range(14,16):
             strip.setPixelColor(i, Color(0,255,0))
-    elif spread < 4:
-        for i in range(8,15)
-        strip.setPixelColor(i, Color(255,0,0))
-        for i in range(15,16):
-            strip.setPixelColor(i, Color(0,255,0))
-    elif spread <3:
-        for i in range(8,16)
-        strip.setPixelColor(i, Color(255,0,0))
+    elif spread < 3:
+        for i in range(8,16):
+            strip.setPixelColor(i, Color(255,0,0))
     else:
         for i in range(8,16):
             strip.setPixelColor(i, Color(0,255,0))
@@ -86,18 +66,18 @@ def setColour(strip, colour, location, show): # colour 'red', 'blue', 'green', '
         if colour == 'red':
             for i in range(8):
                 strip.setPixelColor(i, Color(0,255,0))
-            for i in range(8,16)
+            for i in range(8,16):
                 strip.setPixelColor(i, Color(0,0,0))
             strip.show()
         elif colour == 'blue':
             for i in range(8):
                 strip.setPixelColor(i, Color(0,0,255))
-            for i in range(8,16)
+            for i in range(8,16):
                 strip.setPixelColor(i, Color(0,0,0))
         elif colour == 'green':
             for i in range(8):
                 strip.setPixelColor(i, Color(255,0,0))
-            for i in range(8,16)
+            for i in range(8,16):
                 strip.setPixelColor(i, Color(0,0,0))
         else:
             for i in range(16):
@@ -106,18 +86,18 @@ def setColour(strip, colour, location, show): # colour 'red', 'blue', 'green', '
         if colour == 'red':
             for i in range(8, 16):
                 strip.setPixelColor(i, Color(0,255,0))
-            for i in range(8)
+            for i in range(8):
                 strip.setPixelColor(i, Color(0,0,0))
             strip.show()
         elif colour == 'blue':
             for i in range(8, 16):
                 strip.setPixelColor(i, Color(0,0,255))
-            for i in range(8)
+            for i in range(8):
                 strip.setPixelColor(i, Color(0,0,0))
         elif colour == 'green':
             for i in range(8, 16):
                 strip.setPixelColor(i, Color(255,0,0))
-            for i in range(8)
+            for i in range(8):
                 strip.setPixelColor(i, Color(0,0,0))
         else:
             for i in range(16):
@@ -133,13 +113,14 @@ if __name__ == '__main__':
     print("Current time is %s" % current_time)
     print("")
     print("Testing the pulse feedback() function")
-    pulses = [60,50,40,30,20,10,5,4,3,2]
+    pulses = [80,40,17,5,2]
     for i in pulses:
+        print("Heart rate %s" % i)
         pulsefeedback(strip, i)
         time.sleep(1)
     print("Test complete")
     print("")
-    print("Testing the setColour() function
+    print("Testing the setColour() function")
     colours = ['red', 'blue', 'green', 'black']
     for i in colours:
         setColour(strip, i, 1, True)

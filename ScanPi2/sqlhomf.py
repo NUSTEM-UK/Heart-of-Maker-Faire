@@ -1,5 +1,5 @@
-import sqlite3
-from sqlite3 import Error
+#import sqlite3
+#from sqlite3 import Error
 
 import MySQLdb
 
@@ -7,10 +7,10 @@ import random
 import time
 import sys
 
-host = "localhost"
-user = "testuser"
-password = "userpassword"
-database = "databasename"
+host = "192.168.1.1"
+user = "root"
+password = "plokij"
+database = "Heart"
 
 
 
@@ -35,16 +35,20 @@ def create_new_table(conn, populate):
     """
     try:
         c = conn.cursor()
+        c.execute("""DROP TABLE IF EXISTS heart_store""")
         c.execute(""" CREATE TABLE IF NOT EXISTS heart_store (
                                             cell_id integer,
                                             qr_code integer,
                                             heart_rate integer
-                                        ); """)
+                                        )""")
         if populate == True:
             for i in range(512):
-                sql = ''' INSERT INTO heart_store(cell_id,qr_code,heart_rate)
-                              VALUES(?,?,?) '''
-                c.execute(sql, (i, 0, 0))
+                sql = """ INSERT INTO heart_store\
+                        (cell_id,qr_code,heart_rate) \
+                        VALUES ('%d', '%d', '%d')""" % \
+                        (i, 0, 0)
+                
+                c.execute(sql)
         conn.commit()
 
     except Error as e:
@@ -113,13 +117,19 @@ def unique_cell_picker(conn):
 
 try:
     conn = MySQLdb.connect(host,user,password,database)
+    print(conn)
 except:
-    conn = sqlite3.connect(database)
+    print("Error")
+    #conn = sqlite3.connect(databasesudo pip install PyMySQL
+    
 
-loadNew = sys.argv[1]     # check command line arguments
 try:
+    loadNew = sys.argv[1]     # check command line arguments
     if loadNew == "y":
         print("Storing old data")
         store_old_data(conn)
 except:
     pass
+
+if __name__ == "__main__":
+    create_new_table(conn, True)
