@@ -1,6 +1,7 @@
-#import sqlite3
-#from sqlite3 import Error
-
+"""Dependencies
+apt-get install python3-dev ???
+pip3 install mysqlclient
+"""
 import MySQLdb
 
 import random
@@ -12,27 +13,7 @@ user = "root"
 password = "plokij"
 database = "Heart"
 
-
-
-# def create_connection(db_file):
-#     """ create a database connection to the SQLite database
-#         specified by db_file
-#     :param db_file: database file
-#     :return: Connection object or None
-#     """
-#     try:
-#         conn = sqlite3.connect(db_file)
-#         return conn
-#     except Error as e:
-#         print(e)
-#     return None
-
 def create_new_table(conn, populate):
-    """ create a table from the create_table_sql statement
-    :param conn: Connection object
-    :param create_table_sql: a CREATE TABLE statement
-    :return:
-    """
     try:
         c = conn.cursor()
         c.execute("""DROP TABLE IF EXISTS heart_store""")
@@ -47,7 +28,7 @@ def create_new_table(conn, populate):
                         (cell_id,qr_code,heart_rate) \
                         VALUES ('%d', '%d', '%d')""" % \
                         (i, 0, 0)
-                
+
                 c.execute(sql)
         conn.commit()
 
@@ -55,19 +36,12 @@ def create_new_table(conn, populate):
         print(e)
 
 def update_heart(conn, cell, qr, hr):
-    """
-    update priority, begin_date, and end date of a task
-    :param conn:
-    :param task:
-    :return: project id
-    """
-    sql = ''' UPDATE heart_store
-              SET qr_code = ? ,
-                  heart_rate = ?
-              WHERE  cell_id = ?'''
+    sql = """ UPDATE heart_store
+              SET qr_code = %d ,
+                  heart_rate = %d
+              WHERE  cell_id = %d """ % (qr, hr, cell)
     c = conn.cursor()
-    new_data = (qr,hr,cell)
-    c.execute(sql, new_data)
+    c.execute(sql)
     conn.commit()
 
 def store_old_data(conn):
@@ -95,7 +69,7 @@ def QR_usage_checker(conn, qrcode):
     try:
         c = conn.cursor()
         print("THIS BIT IS HAPPENING")
-        c.execute("SELECT * FROM heart_store WHERE qr_code=?", (qrcode,))
+        c.execute("SELECT * FROM heart_store WHERE qr_code=%d" % qrcode)
         row = c.fetchall()
         print(row)
         if not row:
@@ -120,8 +94,8 @@ try:
     print(conn)
 except:
     print("Error")
-    #conn = sqlite3.connect(databasesudo pip install PyMySQL
-    
+
+
 
 try:
     loadNew = sys.argv[1]     # check command line arguments

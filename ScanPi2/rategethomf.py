@@ -1,6 +1,6 @@
 import serial   # for connection with the Arduino HR reader
 import time
-from homf-neos import *
+from neoshomf import *
 from statistics import mode
 
 ser = serial.Serial()

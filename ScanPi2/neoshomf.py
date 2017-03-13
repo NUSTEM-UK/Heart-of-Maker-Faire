@@ -1,3 +1,5 @@
+""" Insert links to Neopixel on Raspberry Pi guidance, in github and on Adafruit"""
+
 import time
 from neopixel import *
 from pulsevalueshomf import *

@@ -12,9 +12,9 @@ def QRread():
         image = Image.open(image_file)
         image.load()
     code = zbarlight.scan_codes('qrcode', image)
-    if code is None:
+    if code is None:    # did the scan work?
         return False
-    else:
+    else:               # if it did, we chop out the needed data
         QRstr = str(code[0])
         QRint = int(QRstr[2:len(QRstr)-1])
         return QRint
