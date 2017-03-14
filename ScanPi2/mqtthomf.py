@@ -10,8 +10,8 @@ client.loop_start()
 
 def MQTTsend(location, status, data):
     # turn the data into a string
-    # heart/[heartnum]/setMode
-    # heart/[heartnum]/setrate
+    # heart/[heartnum]/setMode : payload
+    # heart/[heartnum]/setrate : payload
     setModeString = "heart/"+str(location).zfill(3)+"/setMode" # zfill adds leading zeros
     setRateString = "heart/"+str(location).zfill(3)+"/setRate"
 

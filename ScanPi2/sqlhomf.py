@@ -45,7 +45,8 @@ def watch_colour_picker(conn):
 
 def watch_colour_reset(conn, colour):
     c = conn.cursor()
-    c.execute("""UPDATE heart_watch SET status = 0 WHERE colour = '%s'""" % colour)
+    c.execute("""UPDATE heart_watch SET status = 0 WHERE
+                colour = '%s'""" % colour)
     conn.commit()
 
 def create_new_table(conn, populate):
@@ -124,14 +125,14 @@ def unique_cell_picker(conn):
     chosen_row = rows[randomcell]
     return(chosen_row[0])
 
+# try to connect to the SQL server and database
 try:
     conn = MySQLdb.connect(host,user,password,database)
     print(conn)
 except:
     print("Error")
 
-
-
+# wdid the user want to use a previous table or load a new on
 try:
     loadNew = sys.argv[1]     # check command line arguments
     if loadNew == "y":
@@ -142,4 +143,3 @@ except:
 
 if __name__ == "__main__":
     watch_colour_picker(conn)
-   
