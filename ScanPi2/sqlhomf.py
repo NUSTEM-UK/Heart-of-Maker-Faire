@@ -27,21 +27,25 @@ def watch_colour_picker(conn):
     c = conn.cursor()
     c.execute("""SELECT * FROM heart_watch WHERE status = 0""")
     rows = c.fetchall()
+    print(rows)
     if not rows: # if all four colurs have been chosen return False
         return False
     randomChoice = random.randint(0, len(rows)-1)
+    print(randomChoice)
     chosenRow = rows[randomChoice]
-    chosenColour = chosenRow[0]
+    print(chosenRow)
+    chosenColour = str(chosenRow[0])
+    print(chosenColour)
 
     # Lock in that colour choice
     c.execute("""UPDATE heart_watch SET status = 1 WHERE
-                colour = %s""" % chosenColour )
+                colour = '%s'""" % chosenColour )
     conn.commit()
     return chosenColour
 
 def watch_colour_reset(conn, colour):
     c = conn.cursor()
-    c.execute("""UPDATE heart_watch SET status = 0 WHERE colour = %s""" % colour)
+    c.execute("""UPDATE heart_watch SET status = 0 WHERE colour = '%s'""" % colour)
     conn.commit()
 
 def create_new_table(conn, populate):
@@ -137,4 +141,5 @@ except:
     pass
 
 if __name__ == "__main__":
-    create_new_table(conn, True)
+    watch_colour_picker(conn)
+   

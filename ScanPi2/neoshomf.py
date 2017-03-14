@@ -1,4 +1,5 @@
-""" Insert links to Neopixel on Raspberry Pi guidance, in github and on Adafruit"""
+""" Insert links to Neopixel on Raspberry Pi guidance, in github and on Adafruit
+This needs to be imported as sudo"""
 
 import time
 from neopixel import *

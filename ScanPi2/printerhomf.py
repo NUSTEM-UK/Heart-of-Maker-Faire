@@ -8,7 +8,7 @@ def qrprintout(heartRate, qrCode):
 
     #print in double height and bold
     printer.doubleHeightOn()  #bigger font size
-    printer.println("Thank you for")  #text being printed
+    printer.println("Thank you for")  #text being printecd
     printer.println("contributing to:")  #text being printed
     printer.setSize('L')  #larger font size and b
     printer.println("The Heart Of\n Maker Faire")
