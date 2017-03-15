@@ -66,7 +66,7 @@ for qrNum in range(stickerNum):
             y=0
 
     # cleanup the directory by removing the png files
-    os.remove('QR-%s.png' % qrNum)
+    # os.remove('QR-%s.png' % qrNum)
 
 # save the pdf
 c.save()
