@@ -104,10 +104,8 @@ def store_old_data(conn):
 def QR_usage_checker(conn, qrcode):
     try:
         c = conn.cursor()
-        print("THIS BIT IS HAPPENING")
         c.execute("SELECT * FROM heart_store WHERE qr_code=%d" % qrcode)
         row = c.fetchall()
-        print(row)
         if not row:
             print("UNIQUE")
             return(True)
@@ -132,7 +130,7 @@ try:
 except:
     print("Error")
 
-# wdid the user want to use a previous table or load a new on
+# did the user want to use a previous table or load a new on
 try:
     loadNew = sys.argv[1]     # check command line arguments
     if loadNew == "y":

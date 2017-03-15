@@ -1,7 +1,14 @@
 from Adafruit_Thermal import *
+import sys
+
+
 printer = Adafruit_Thermal("/dev/serial0", 19200, timeout=5)
 
-def qrprintout(heartRate, qrCode):
+location = sys.argv[1]     # check command line arguments
+hr = sys.argv[2] 
+status = sys.argv[3].upper()
+
+def qrprintout(heartRate, qrCode, status):
     #Thank you for contributing to the heart of maker Faire
     #print in centre
     printer.justify('C')
@@ -28,16 +35,16 @@ def qrprintout(heartRate, qrCode):
     printer.setLineHeight(25)
     printer.println("\n")  #creating space between lines
     printer.println("Your Heart Is")  #printing text
-    printer.println("stored at QR Location:")  #printing text
+    printer.println("stored at %s QR Location:" % status)  #printing text
 
     #space between text and qr code
     printer.setLineHeight(10)  #setting space size
     printer.println("\n")  #creating a space between text
 
     # #Print QR code
-    # datanumb = "data" + str(qrCode)
-    # import gfx.adaqrcode as adaqrcode  #importing qr code
-    # printer.printBitmap(adaqrcode.width, adaqrcode.height, getattr(adaqrcode, datanumb))  #printing qr code
+    datanumb = "QR-" + str(qrCode) + "_data"
+    import gfx.adaqrcode as adaqrcode  #importing qr code
+    printer.printBitmap(adaqrcode.width, adaqrcode.height, getattr(adaqrcode, datanumb))  #printing qr code
 
     #get in touch
     printer.setLineHeight(10)  #setting spaze size
@@ -48,4 +55,5 @@ def qrprintout(heartRate, qrCode):
     printer.feed(3)  #adding extra paper to come out of the printer
 
 if __name__ == '__main__':
-    qrprintout(99, 1)
+    
+    qrprintout(hr, location, status)

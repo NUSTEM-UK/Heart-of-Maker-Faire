@@ -23,7 +23,7 @@ def MQTTsend(location, status, data):
 if __name__ == '__main__':
     print("Sending data...")
     try:
-        MQTTsend(244, 0, 56)
+        MQTTsend(244, 0, 56, 1)
         print("Data sent")
     except:
         print("Error sending data...")
