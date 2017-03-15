@@ -4,4 +4,5 @@ to the terminal"""
 
 import os
 def HRprinter(location, heartrate, colour):
+    print("Printing")
     os.system("python printerhomf.py " +str(location) + " " + str(heartrate) + " " + colour + " &")
