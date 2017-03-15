@@ -8,18 +8,16 @@ from sqlhomf import *
 from gpiozero import LightSensor # The gpio Lightsensor
 
 def main():
-    ldr = LightSensor(12, charge_time_limit=0.2, threshold = 0.7) # LDR sensor
+    print("It begins")
+    ldr = LightSensor(12, charge_time_limit=0.2, threshold = 0.4) # LDR sensor
     last_time_checked = int(round(time.time()*1000)) # record the start time
     frame = 0 # set the initial frame to zero for the blinky lights
     repeatcode = False # set the QR repetition bool to False
     while True:
         setColour(strip, 'green', 1, False)
         last_time_checked, frame = pulselight(strip, last_time_checked, frame) # get the current pulse frame
-        #if frame == 50:
-            #hr = getheartrate()
-            #MQTTsend(60, 'blue', hr)
-            #HRprinter(60, hr, 'green')
         if (ldr.light_detected == False):   # a heart has been placed on the scanner
+            print("Heart detected")
             setColour(strip, 'blue', 1, True)
             scannedQR = QRread()    # read the QR on the heart
 
