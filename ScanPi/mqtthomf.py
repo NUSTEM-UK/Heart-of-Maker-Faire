@@ -4,9 +4,12 @@ import time
 qos = 1
 hiccup = 0.01
 
-client = mqtt.Client()
-client.connect('192.168.1.1')
-client.loop_start()
+try:
+    client = mqtt.Client()
+    client.connect('192.168.1.1')
+    client.loop_start()
+except:
+    print("Error connecting to MQTT, are you on the correct network?")
 
 def MQTTsend(location, status, data):
     # turn the data into a string

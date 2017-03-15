@@ -126,9 +126,10 @@ def unique_cell_picker(conn):
 # try to connect to the SQL server and database
 try:
     conn = MySQLdb.connect(host,user,password,database)
+    print("SQL connection successful:")
     print(conn)
 except:
-    print("Error")
+    print("Error connecting to the SQL database, are you on the correct network?")
 
 # did the user want to use a previous table or load a new on
 try:

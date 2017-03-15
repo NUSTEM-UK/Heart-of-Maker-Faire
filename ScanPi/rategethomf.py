@@ -18,8 +18,8 @@ def getheartrate():
             RecentHrs.append(newSerial) # add the new HR data to the end of the list
             del RecentHrs[0] # remove the oldest data from the list (first in the list)
             RANGE = max(RecentHrs) - min(RecentHrs) # find the range of the heart rate list
-            hrblink(strip)
-            print(RecentHrs)
+            if 50 < newSerial < 150:
+                hrblink(strip)
             pulsefeedback(strip, RANGE) # visual light feedback for heart rate
 
             if RANGE < 3 and 50 < newSerial < 150:
