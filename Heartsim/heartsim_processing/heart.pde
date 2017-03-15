@@ -87,8 +87,11 @@ class Heart {
     void display() {
         // Setting noStroke() doubles available frame rate
         // Set noStroke() for Raspberry Pi 60fps.
-        stroke(255);
-        // noStroke();
+        if (drawOutlines) {
+          stroke(255);
+        } else {
+          noStroke();
+        }
         // fill(127+127*sin(angle), 255, 255);
         fill(hue, 255, mag);
         rect(x,y,size,size);
