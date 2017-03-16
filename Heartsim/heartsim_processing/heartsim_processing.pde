@@ -2,8 +2,10 @@
 
 OPC opc;
 import mqtt.*;
+import de.bezier.data.sql.*;
 
 MQTTClient client;
+MySQL mysql;
 
 Heart[] hearts;
 
@@ -21,6 +23,13 @@ int stripLength = (cols / boards) * spanLEDs;
 // For Raspberry Pi, set this to 10 for 60fps performance.
 // Also set noStroke() in Heart.display().
 int heartsize = 40;  // pixel width/height
+boolean drawOutlines = false; // draw cell outline frames?
+
+// MySQL connection, for disaster recovery or resyncing
+String user = "root"; // Yes, yes. We know.
+String pass = "plokij"; // Seriously. We *are* that lame
+String server = "192.168.1.1";
+String dbname = "Heart";
 
 void settings() {
     // Have to do this here in Processing3.x, rather than in setup()
@@ -71,11 +80,13 @@ void setup() {
     client.subscribe("heart/#");
     // client.subscribe(".heart", int qos);
 
+    // Conenct to the MySQL server. Might as well hold this connection open
+    mysql = new MySQL( this, server, dbname, user, pass );
 
     frameRate(60);
     colorMode(HSB);
 
-}
+} // setup()
 
 void draw() {
     background(0);
@@ -104,7 +115,7 @@ void draw() {
     }
 
     // ...and around we go again
-}
+} // draw()
 
 void messageReceived(String topic, byte[] payload) {
     println("new message: " + topic + " - " + new String(payload));
@@ -145,7 +156,29 @@ void messageReceived(String topic, byte[] payload) {
           // Could send an acknowledgement here
         }
       }
+    } // if topicParts.length
+} // messageReceived
 
+void keyPressed() {
+  // Check to see if 'R' pressed
+  // This acts as an automatic callback during draw()
+  if (key == 82 ) {
+    println(">>> EMERGENCY! SQL RELOAD REQUESTED!");
+    if ( mysql.connect() ) {
+      // Pull the data then step through it, rewriting the Hearts' rates
+      mysql.query( "SELECT * from heart_store");
+      while (mysql.next()) {
+        int heartNum = mysql.getInt("cell_id");
+        int heartRate = mysql.getInt("heart_rate");
+        // If heartRate > 0, update that cell and trigger phase to red
+        if (heartRate > 0) {
+            hearts[heartNum].setRate(heartRate);
+            hearts[heartNum].setColour(0.0, 5.0);
+        }
+      }
+      println("<<< SQL RELOAD COMPLETE");
+    } else {
+      println("<<< MySQL CONNECTION FAILED!");
     }
-
+  }
 }
