@@ -10,7 +10,7 @@ void setup() {
 
 void draw() {
   // Where are the target files?
-  File dir = new File("/Users/jonathan/Documents/Development/Heart-of-Maker-Faire/QRmaker/processed/bitmapImageConvert");
+  File dir = new File("/Users/rygp8/GitHub/Heart-of-Maker-Faire/QRmaker/processed");
   File[] files = dir.listFiles();
 
   String      filename, basename;
@@ -50,13 +50,17 @@ void draw() {
       output = createWriter(filename);
 
       // Write image dimensions and beginning of array
-      output.println("#ifndef _" + basename + "_h_");
-      output.println("#define _" + basename + "_h_");
-      output.println();
-      output.println("#define " + basename + "_width  " + img.width);
-      output.println("#define " + basename + "_height " + img.height);
-      output.println();
-      output.print("static const uint8_t PROGMEM " + basename + "_data[] = {");
+    //   output.println("#ifndef _" + basename + "_h_");
+    //   output.println("#define _" + basename + "_h_");
+    //   output.println();
+    //   output.println("#define " + basename + "_width  " + img.width);
+    //   output.println("#define " + basename + "_height " + img.height);
+    //   output.println();
+    //   output.print("static const uint8_t PROGMEM " + basename + "_data[] = {");
+        output.println("data" + filename + " = [");
+      //
+    //   output.println("width = 348");
+    //   output.println("height = 348");
 
       // Generate body of array
       for(pixelNum=byteNum=y=0; y<img.height; y++) { // Each row...
@@ -77,9 +81,9 @@ void draw() {
 
       // End array, close file, exit program
       output.println();
-      output.println("};");
+      output.println("]");
       output.println();
-      output.println("#endif // _" + basename + "_h_");
+    //   output.println("#endif // _" + basename + "_h_");
       output.flush();
       output.close();
       println("Done!");
