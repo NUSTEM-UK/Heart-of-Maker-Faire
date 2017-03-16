@@ -26,7 +26,7 @@ def main():
                 ldr.wait_for_light()    # wait for the heart to be removed
                 continue    # go back to the start of the while loop
 
-            repeatcode = QR_usage_checker(conn, scannedQR) # check for an already used QR
+            repeatcode, cell_num = QR_usage_checker(conn, scannedQR) # check for an already used QR
             if repeatcode == True:
                 cell_num = unique_cell_picker(conn) # choose a unique cell
                 update_heart(conn, cell_num, scannedQR, 0) # bagsey the cell from the database
@@ -40,6 +40,7 @@ def main():
                 HRprinter(scannedQR, heartrate, status)
                 repeatcode = False
             else:
+
                 pass
 
 if __name__ == "__main__":

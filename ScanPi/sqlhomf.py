@@ -108,10 +108,10 @@ def QR_usage_checker(conn, qrcode):
         row = c.fetchall()
         if not row:
             print("UNIQUE")
-            return(True)
+            return(True, None)
         else:
             print("NOT UNIQUE")
-            return(False)
+            return(False, row[0])
     except:
         pass
 
