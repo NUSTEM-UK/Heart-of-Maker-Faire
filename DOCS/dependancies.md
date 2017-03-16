@@ -1,4 +1,6 @@
-Raspberry Pi Dependancies:
+# Dependences
+
+## Raspberry Pi
 - OpenCV
 - ZBar
 - PILLOW
@@ -6,28 +8,40 @@ Raspberry Pi Dependancies:
 - Neopixels on a Pi3
 - The Adafruit Thermal Printer
 
-MySQLbd
-`sudo apt-get install python-dev libmysqlclient-dev`
-`sudo apt-get install python3-dev`
-`pip install mysqlclient`
+### MySQLdb
+* `sudo apt-get install python-dev libmysqlclient-dev`
+* `sudo apt-get install python3-dev`
+* `pip install mysqlclient`
 
-ZBar and ZBarlight python wrapper --
-`sudo apt-get install zbar-tools python-zbar libzbar0`
-`pip3 install zbarlight`
-Usage docs here: https://pypi.python.org/pypi/zbarlight
+### ZBar and ZBarlight python wrapper
+* `sudo apt-get install zbar-tools python-zbar libzbar0`  
+* `pip3 install zbarlight`
 
-Neopixels --
+Usage docs here: [https://pypi.python.org/pypi/zbarlight](https://pypi.python.org/pypi/zbarlight)
+
+### Neopixels
 This takes an amalgamation of two tutorials to run:
-https://github.com/jgarff/rpi_ws281x - Read Build, Running and Limitations
-and
+https://github.com/jgarff/rpi_ws281x - Read Build, Running and Limitations  
+and  
 https://learn.adafruit.com/neopixels-on-raspberry-pi/software - in particular these steps:
-`sudo apt-get install build-essential python-dev git scons swig`
 
-Adafruit Thermal Printer --
-https://github.com/adafruit/Adafruit-Thermal-Printer-Library - - The Arduino Files (for Processing
+    sudo apt-get install build-essential python-dev git scons swig
+
+### Adafruit Thermal Printer --
+* https://github.com/adafruit/Adafruit-Thermal-Printer-Library -- The Arduino Files (for Processing
   of BMP files for QR codes)
-https://github.com/adafruit/Python-Thermal-Printer - - To install the Thermal Printer working with
+* https://github.com/adafruit/Python-Thermal-Printer -- To install the Thermal Printer working with
   python on the Pi
-https://learn.adafruit.com/pi-thermal-printer/overview - - Adafruit's Tutorial
+* https://learn.adafruit.com/pi-thermal-printer/overview -- Adafruit's Tutorial
 
-Install OpenCv -- [this tutorial](http://www.pyimagesearch.com/2016/04/18/install-guide-raspberry-pi-3-raspbian-jessie-opencv-3/)
+### OpenCV
+* Install OpenCv -- [this tutorial](http://www.pyimagesearch.com/2016/04/18/install-guide-raspberry-pi-3-raspbian-jessie-opencv-3/)
+
+
+## Processing3
+
+We're using Processing3. Libraries used (all installed  from the Library Manager):
+
+* Bezier SQL, which despite lots of posts around the web *does* appear to work with Processing3.
+* MQTT
+* OPC -- TODO: write up installation of this
