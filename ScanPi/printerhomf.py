@@ -1,14 +1,11 @@
 from Adafruit_Thermal import *
-import gfx.qrbmp as BMPdata
+# import gfx.qrbmp as BMPdata
 import sys
 
 printer = Adafruit_Thermal("/dev/serial0", 19200, timeout=5)
-
-
 location = sys.argv[1]     # check command line arguments
-hr = sys.argv[2] 
+hr = sys.argv[2]
 status = sys.argv[3].upper()
-
 
 def qrprintout(heartRate, qrCode, status):
     #Thank you for contributing to the heart of maker Faire
@@ -44,10 +41,11 @@ def qrprintout(heartRate, qrCode, status):
     printer.println("\n")  #creating a space between text
 
     # #Print QR code
-    datanumb = "data"+str(qrCode)
-    print(datanumb)
+    filename = "QRbytes/" + str(qrCode) + ".py"
+    data = []
+    execfile(filename)
     #printer.printBitmap(width, height, datanumb)  #printing qr code
-    printer.printBitmap(BMPdata.width, BMPdata.height, getattr(BMPdata, datanumb))  #printing qr code
+    printer.printBitmap(348, 348, data)  #printing qr code
 
     #get in touch
     printer.setLineHeight(10)  #setting spaze size

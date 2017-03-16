@@ -37,7 +37,7 @@ def main():
                     continue
                 update_heart(conn, cell_num, scannedQR, heartrate)
                 MQTTsend(cell_num, status, heartrate)
-                HRprinter(cell_num, heartrate, status)
+                HRprinter(scannedQR, heartrate, status)
                 repeatcode = False
             else:
                 pass
