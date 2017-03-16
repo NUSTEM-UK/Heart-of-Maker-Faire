@@ -28,7 +28,7 @@ boolean drawOutlines = false; // draw cell outline frames?
 // MySQL connection, for disaster recovery or resyncing
 String user = "root"; // Yes, yes. We know.
 String pass = "plokij"; // Seriously. We *are* that lame
-String server = "192.168.1.1.";
+String server = "192.168.1.1";
 String dbname = "Heart";
 
 void settings() {
@@ -170,7 +170,11 @@ void keyPressed() {
       while (mysql.next()) {
         int heartNum = mysql.getInt("cell_id");
         int heartRate = mysql.getInt("heart_rate");
-        hearts[heartNum].setRate(heartRate);
+        // If heartRate > 0, update that cell and trigger phase to red
+        if (heartRate > 0) {
+            hearts[heartNum].setRate(heartRate);
+            hearts[heartNum].setColour(0.0, 5.0);
+        }
       }
       println("<<< SQL RELOAD COMPLETE");
     } else {
