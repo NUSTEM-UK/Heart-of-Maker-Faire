@@ -3,48 +3,48 @@ from Adafruit_Thermal import *
 import sys
 
 printer = Adafruit_Thermal("/dev/serial0", 19200, timeout=5)
-location = sys.argv[1]     # check command line arguments
-hr = sys.argv[2]
+location = int(sys.argv[1])     # check command line arguments
+hr = int(sys.argv[2])
 status = sys.argv[3].upper()
 
+
 def qrprintout(heartRate, qrCode, status):
-    #Thank you for contributing to the heart of maker Faire
-    #print in centre
-    printer.justify('C')
 
-    #print in double height and bold
-    printer.doubleHeightOn()  #bigger font size
-    printer.println("Thank you for")  #text being printecd
-    printer.println("contributing to:")  #text being printed
-    printer.setSize('L')  #larger font size and b
-    printer.println("The Heart Of\n Maker Faire")
-    printer.setDefault()  #resetting the printing options such as text size
+    #print(data)
+    ##Thank you for contributing to the heart of maker Faire
+    ##print in centre
+    #printer.justify('C')
+
+    ##print in double height and bold
+    #printer.doubleHeightOn()  #bigger font size
+    #printer.println("Thank you for")  #text being printecd
+    #printer.println("contributing to:")  #text being printed
+    #printer.setSize('L')  #larger font size and b
+    #printer.println("The Heart Of\n Maker Faire")
+    #printer.setDefault()  #resetting the printing options such as text size
 
 
-    #Your heart rate is ...
-    printer.justify('C')  #centering the text
-    printer.println("Your Heart Rate Is:")  #printing text
-    printer.setLineHeight(10)  #setting space size
-    printer.println("\n")  #creating space between lines
-    printer.doubleHeightOn()  #larger font size
-    printer.println(heartRate, " bpm")  #text being printed
-    printer.doubleHeightOff()  #resetting the font size
+    ##Your heart rate is ...
+    #printer.justify('C')  #centering the text
+    #printer.println("Your Heart Rate Is:")  #printing text
+    #printer.setLineHeight(10)  #setting space size
+    #printer.println("\n")  #creating space between lines
+    #printer.doubleHeightOn()  #larger font size
+    #printer.println(heartRate, " bpm")  #text being printed
+    #printer.doubleHeightOff()  #resetting the font size
 
-    #Your Heart is stored at...
-    printer.setLineHeight(25)
-    printer.println("\n")  #creating space between lines
-    printer.println("Your Heart Is")  #printing text
-    printer.println("stored at %s QR Location:" % status)  #printing text
+    ##Your Heart is stored at...
+    #printer.setLineHeight(25)
+    #printer.println("\n")  #creating space between lines
+    #printer.println("Your Heart Is")  #printing text
+    #printer.println("stored at %s QR Location:" % status)  #printing text
 
-    #space between text and qr code
-    printer.setLineHeight(10)  #setting space size
-    printer.println("\n")  #creating a space between text
+    ##space between text and qr code
+    #printer.setLineHeight(10)  #setting space size
+    #printer.println("\n")  #creating a space between text
 
-    # #Print QR code
-    filename = "QRbytes/" + str(qrCode) + ".py"
-    data = []
-    execfile(filename)
-    #printer.printBitmap(width, height, datanumb)  #printing qr code
+    ## #Print QR code
+    
     printer.printBitmap(348, 348, data)  #printing qr code
 
     #get in touch
@@ -56,4 +56,7 @@ def qrprintout(heartRate, qrCode, status):
     printer.feed(3)  #adding extra paper to come out of the printer
 
 if __name__ == '__main__':
+    filename = "QRbytes/" + str(location) + ".py"
+    print(filename)
+    execfile(filename)    
     qrprintout(hr, location, status)
