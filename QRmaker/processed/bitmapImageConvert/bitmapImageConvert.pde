@@ -57,7 +57,7 @@ void draw() {
     //   output.println("#define " + basename + "_height " + img.height);
     //   output.println();
     //   output.print("static const uint8_t PROGMEM " + basename + "_data[] = {");
-        output.println("data" + filename + " = [");
+        output.println("data = [");
       //
     //   output.println("width = 348");
     //   output.println("height = 348");

@@ -11,7 +11,10 @@ const char* mqtt_server = "192.168.1.1";
 
 String subsTopicString;
 char subsTopicArray[100];
+<<<<<<< HEAD
 char tempBuffer[60];        // Temporary for MQTT publish string/array conversions
+=======
+>>>>>>> origin/master
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -105,6 +108,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
         }
     }
 
+<<<<<<< HEAD
     // Chuck the payload back to the root topic, as a demo
     // Payload needs to be a char* array, so we first make that:
 
@@ -114,5 +118,23 @@ void callback(char* topic, byte* payload, unsigned int length) {
         payloadString.toCharArray(tempBuffer, 60);
         client.publish("heart/00/test", tempBuffer);
     }
+=======
+//    // Now loop through the String and chunk it up
+//    while (pieceEnd != -1) {
+//        // Select the string from start to first '/', and output
+//        String subString = topicString.substring(0, pieceEnd);
+//        Serial.println(subString);
+//        // Now chop that part off. We'll do this destructively for now.
+//        topicString = topicString.substring(pieceEnd+1);
+//        // Find the next slash, if any
+//        pieceEnd = topicString.indexOf('/');
+//        // ...and loop
+//    }
+    // ...and don't forget to print the last bit
+    // (this will repeat if we have a topic with a closing slash.
+    // But that will never happen. Right?)
+//    Serial.println(topicString);
+    
+>>>>>>> origin/master
 }
 
