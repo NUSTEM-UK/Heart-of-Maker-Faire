@@ -49,6 +49,14 @@ def watch_colour_reset(conn, colour):
                 colour = '%s'""" % colour)
     conn.commit()
 
+def watch_total_reset(conn):
+    colours = ["green", "yellow", 'purple', 'cyan']
+    c = conn.cursor()
+    for i in colours:
+        c.execute("""UPDATE heart_watch SET status = 0 WHERE
+                    colour = '%s'""" % i)
+    conn.commit()
+
 def create_new_table(conn, populate):
     try:
         c = conn.cursor()

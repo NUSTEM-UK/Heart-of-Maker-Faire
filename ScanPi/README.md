@@ -1,7 +1,7 @@
 # Creating a the 'Heart of' scanner
 ### 1. Begin with a fresh install of Raspbian and a Pi3
 [Start here](https://www.raspberrypi.org/documentation/ "Raspberry Pi Setup Guide") and follow the instructions to download and flash Raspbian.
-Once your Pi is up and running, you'll need to: `sudo apt-get update` and `sudo apt-get update`.
+Once your Pi is up and running, you'll need to: `sudo apt-get update` and `sudo apt-get upgrade`.
 
 Next you'll need to enable your PiCamera, setup guide [here](https://www.raspberrypi.org/documentation/configuration/camera.md "PiCamera Setup").
 ### 2. Installing the necessary dependencies

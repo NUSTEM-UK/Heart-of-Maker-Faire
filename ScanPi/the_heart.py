@@ -27,21 +27,22 @@ def main():
                 continue    # go back to the start of the while loop
 
             repeatcode, cell_num = QR_usage_checker(conn, scannedQR) # check for an already used QR
+
             if repeatcode == True:
                 cell_num = unique_cell_picker(conn) # choose a unique cell
                 update_heart(conn, cell_num, scannedQR, 0) # bagsey the cell from the database
-                setColour(strip, 'blue', 2, True)
-                heartrate = getheartrate()
-                status = watch_colour_picker(conn)
-                if status == False:
-                    continue
-                update_heart(conn, cell_num, scannedQR, heartrate)
-                MQTTsend(cell_num, status, heartrate)
+            setColour(strip, 'blue', 2, True)
+            status = watch_colour_picker(conn)
+            if status == False:
+                print("There are no watch spaces left")
+                continue
+            heartrate = getheartrate()
+            update_heart(conn, cell_num, scannedQR, heartrate)
+            MQTTsend(cell_num, status, heartrate)
+            if repeatcode == True:
                 HRprinter(scannedQR, heartrate, status)
                 repeatcode = False
-            else:
 
-                pass
 
 if __name__ == "__main__":
     try:
