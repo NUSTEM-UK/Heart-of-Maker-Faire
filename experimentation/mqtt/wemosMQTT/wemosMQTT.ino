@@ -51,8 +51,12 @@ void loop() {
 // Handle MQTT message receipt
 void callback(char* topic, byte* payload, unsigned int length) {
 
-    // Convert topic and messgae to C++ String types, for ease of handling
+    // Convert topic and message to C++ String types, for ease of handling
     String payloadString;
+    String subString;
+    int pieceEnd;
+    int heartNum;
+    String command;
     for (int i = 0; i < length; i++) {
         payloadString += String((char)payload[i]);
     }
@@ -68,23 +72,53 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
     // Let's start throwing Strings around
     // Find the index position of the first /, if any
-    int pieceEnd = topicString.indexOf('/');
+    pieceEnd = topicString.indexOf('/');
 
-    // Now loop through the String and chunk it up
-    while (pieceEnd != -1) {
-        // Select the string from start to first '/', and output
-        String subString = topicString.substring(0, pieceEnd);
-        Serial.println(subString);
-        // Now chop that part off. We'll do this destructively for now.
-        topicString = topicString.substring(pieceEnd+1);
-        // Find the next slash, if any
-        pieceEnd = topicString.indexOf('/');
-        // ...and loop
+    if (pieceEnd != -1) {
+        // Pull the first part of the topic
+        subString = topicString.substring(0, pieceEnd);
+        // Check we're in the intended namespace
+        if (subString == "heart") {
+            // Chop the front part
+            topicString = topicString.substring(pieceEnd+1);
+            // Find the next '/'
+            pieceEnd = topicString.indexOf('/');
+            // Check there is one
+            if (pieceEnd != -1) {
+                subString = topicString.substring(0, pieceEnd);
+                // Extract the heart number
+                heartNum = subString.toInt();
+                // Chunk the topicString again
+                topicString = topicString.substring(pieceEnd+1);
+                // and now we should be left with the command.
+                // So this is where we'd handle the received command.
+                // ...which strikes me as fairly nasty. But hey, if it works...
+                Serial.print("Command would be to heart #");
+                Serial.print(heartNum);
+                Serial.print(" with signal: ");
+                Serial.print(topicString);
+                Serial.print(" and value: ");
+                Serial.println(payloadString);
+            }
+            
+        }
     }
+
+//    // Now loop through the String and chunk it up
+//    while (pieceEnd != -1) {
+//        // Select the string from start to first '/', and output
+//        String subString = topicString.substring(0, pieceEnd);
+//        Serial.println(subString);
+//        // Now chop that part off. We'll do this destructively for now.
+//        topicString = topicString.substring(pieceEnd+1);
+//        // Find the next slash, if any
+//        pieceEnd = topicString.indexOf('/');
+//        // ...and loop
+//    }
     // ...and don't forget to print the last bit
     // (this will repeat if we have a topic with a closing slash.
     // But that will never happen. Right?)
-    Serial.println(topicString);
+//    Serial.println(topicString);
     
 }
 
