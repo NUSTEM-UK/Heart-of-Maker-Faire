@@ -22,7 +22,7 @@ String skutterNameString;
 char skutterNameArray[60];
 
 void setup() {
-    Serial.begin(921600);
+    Serial.begin(115200);
     setup_wifi();
 
     // Get this Huzzah's MAC address and use it to register with the MQTT server
@@ -64,7 +64,27 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print("Message arrived on [");
     Serial.print(topicString);
     Serial.print("] : ");
-    Serial.print(payloadString);
+    Serial.println(payloadString);
+
+    // Let's start throwing Strings around
+    // Find the index position of the first /, if any
+    int pieceEnd = topicString.indexOf('/');
+
+    // Now loop through the String and chunk it up
+    while (pieceEnd != -1) {
+        // Select the string from start to first '/', and output
+        String subString = topicString.substring(0, pieceEnd);
+        Serial.println(subString);
+        // Now chop that part off. We'll do this destructively for now.
+        topicString = topicString.substring(pieceEnd+1);
+        // Find the next slash, if any
+        pieceEnd = topicString.indexOf('/');
+        // ...and loop
+    }
+    // ...and don't forget to print the last bit
+    // (this will repeat if we have a topic with a closing slash.
+    // But that will never happen. Right?)
+    Serial.println(topicString);
     
 }
 
