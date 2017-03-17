@@ -11,6 +11,10 @@ const char* mqtt_server = "192.168.1.1";
 
 String subsTopicString;
 char subsTopicArray[100];
+<<<<<<< HEAD
+char tempBuffer[60];        // Temporary for MQTT publish string/array conversions
+=======
+>>>>>>> origin/master
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -104,6 +108,17 @@ void callback(char* topic, byte* payload, unsigned int length) {
         }
     }
 
+<<<<<<< HEAD
+    // Chuck the payload back to the root topic, as a demo
+    // Payload needs to be a char* array, so we first make that:
+
+    // Wrap this in a test so we don't flood the channel in this example.
+    // ...not that I did that. Ahem.
+    if ( heartNum != 0 ) {
+        payloadString.toCharArray(tempBuffer, 60);
+        client.publish("heart/00/test", tempBuffer);
+    }
+=======
 //    // Now loop through the String and chunk it up
 //    while (pieceEnd != -1) {
 //        // Select the string from start to first '/', and output
@@ -120,5 +135,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
     // But that will never happen. Right?)
 //    Serial.println(topicString);
     
+>>>>>>> origin/master
 }
 

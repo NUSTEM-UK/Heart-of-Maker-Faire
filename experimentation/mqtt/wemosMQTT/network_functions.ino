@@ -31,7 +31,10 @@ void reconnect() {
     digitalWrite(00, LOW);
     if (client.connect(skutterNameArray)) {
       Serial.println("connected");
+<<<<<<< HEAD
+=======
 //      client.publish("orchestra/announce", subsTargetArray);
+>>>>>>> origin/master
       client.subscribe(subsTopicArray);
     } else {
       Serial.print("failed, rc=");
