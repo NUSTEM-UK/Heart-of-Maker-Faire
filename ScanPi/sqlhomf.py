@@ -119,7 +119,12 @@ def QR_usage_checker(conn, qrcode):
             return(True, None)
         else:
             print("NOT UNIQUE")
-            return(False, row[0])
+            print(row)
+            theRow = row[0]
+            print(theRow)
+            QR = theRow[0]
+            print(QR)
+            return(False, QR)
     except:
         pass
 

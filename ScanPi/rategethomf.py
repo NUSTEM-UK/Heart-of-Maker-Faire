@@ -20,6 +20,7 @@ def getheartrate():
             RANGE = max(RecentHrs) - min(RecentHrs) # find the range of the heart rate list
             if 50 < newSerial < 150:
                 hrblink(strip)
+                print(newSerial)
             pulsefeedback(strip, RANGE) # visual light feedback for heart rate
 
             if RANGE < 3 and 50 < newSerial < 150:
