@@ -1,4 +1,24 @@
-// Adapted from the 2D Array example code, primarily.
+/* ************************************************
+** HEARTSIM                                      **
+** Simulates a displayed grid of beating hearts. **
+** Run in Processing3 on a Raspberry PI, which   **
+** also serves as FadeCandy server.              **
+**                                               **
+** Originally built for Maker Faire UK 2017      **
+** by Jonathan Sanderson and Joe Shimwell        **
+** NUSTEM, Northumbria University, Newcastle, UK **
+**                                               **
+** Dependencies:                                 **
+** opc  : Open Pixel Control. See Adafruit docs. **
+** mqtt : Install from Processing GUI.           **
+** SQL  : Install from Processing GUI.           **
+** Requirements:                                 **
+** MySQL server & MQTT broker, assumed to be on  **
+** same host (Pi Zero W)                         **
+**                                               **
+** See Github for full documentation.            **
+***************************************************
+*/
 
 OPC opc;
 import mqtt.*;
@@ -10,8 +30,8 @@ MySQL mysql;
 Heart[] hearts;
 
 // Number of columns and rows in the grid
-int cols = 36;
-int rows = 14;
+int cols = 30;
+int rows = 16;
 int numHearts = cols * rows;
 // Geometry: over how many boards is the display arranged?
 // Should be a factor of cols
@@ -20,14 +40,16 @@ int boards = 3;
 int spanLEDs = 5;
 int stripLength = (cols / boards) * spanLEDs;
 
+// Performance-sensitive configuration options
 // For Raspberry Pi, set this to 10 for 60fps performance.
-// Also set noStroke() in Heart.display().
-int heartsize = 40;  // pixel width/height
+int heartsize = 10;           // pixel width/height
 boolean drawOutlines = false; // draw cell outline frames?
+                              // true arguably looks nicer,
+                              // but false is *much* faster, on RPi
 
 // MySQL connection, for disaster recovery or resyncing
-String user = "root"; // Yes, yes. We know.
-String pass = "plokij"; // Seriously. We *are* that lame
+String user = "root";         // Yes, yes. We know.
+String pass = "plokij";       // Seriously. We *are* this lame
 String server = "192.168.1.1";
 String dbname = "Heart";
 
@@ -37,7 +59,6 @@ void settings() {
 }
 
 void setup() {
-
     // Fire up the object array
     hearts = new Heart[numHearts];
     // Now initialise all those lovely hearts
@@ -59,18 +80,47 @@ void setup() {
         );
     }
 
+    // BEGIN OPC configuration
+
     // Connect to the OPC server
     opc = new OPC(this, "127.0.0.1", 7890);
+
     // Set the location of several LEDs arranged in a strip.
     // (x,y) is the center of the strip.
     // void ledStrip(int index, int count, float x, float y, float spacing, float angle, boolean reversed)
-    for (int i = 0; i < 8 ; i++) {
-        // println(i*64, stripLength, ((cols*heartsize)/6), (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0);
-        opc.ledStrip(i * 64, stripLength, ((cols*heartsize)/6), (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true);
+
+    // For most versions, we want the strips to be run in reversed geometry.
+    // This also seems to be marginally faster, which makes no sense to me,
+    // but so it goes.
+    boolean reversed = true;
+
+    // First, the left-most column
+    // precalculate the horizontal centre
+    float xcentre = (cols * heartsize)/6.0;
+    for (int i = 0; i < 16 ; i++) {
+        opc.ledStrip( i * 64, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
         println ("Strip " + i + " initialized");
     }
-    // opc.ledStrip(448, 60, ((cols*heartsize)/6), (heartsize * 7)-(heartsize/2), (heartsize/5), 0, true);
+    println( ">>> COLUMN 1 COMPLETE" );
 
+    // Centre column. Again, precalculate horizontal centre
+    xcentre = (cols * heartsize) / 2.0;
+    for (int i = 0; i < 16 ; i++) {
+        opc.ledStrip( (i+16) * 64, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
+        println ("Strip " + (i+16) + " initialized");
+    }
+    println( ">>> COLUMN 2 COMPLETE" );
+
+    // ...and the rightmost column
+    xcentre = ((cols * heartsize) * 5.0)/6.0;
+    for (int i = 0; i < 16 ; i++) {
+        opc.ledStrip( (i + 32) * 64, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
+        println ("Strip " + (i+32) + " initialized");
+    }
+    println( ">>> COLUMN 3 COMPLETE" );
+    // END OPC configuration
+
+    // BEGIN MQTT configuration
     // Initialise the MQTT connection
     // See https://github.com/256dpi/processing-mqtt
     client = new MQTTClient(this);
@@ -79,6 +129,7 @@ void setup() {
     // Subscribe to the /heart topic
     client.subscribe("heart/#");
     // client.subscribe(".heart", int qos);
+    // END MQTT configuration
 
     // Conenct to the MySQL server. Might as well hold this connection open
     mysql = new MySQL( this, server, dbname, user, pass );
