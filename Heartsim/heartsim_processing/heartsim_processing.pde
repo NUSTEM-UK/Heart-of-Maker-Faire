@@ -17,6 +17,8 @@
 ** same host (Pi Zero W)                         **
 **                                               **
 ** See Github for full documentation.            **
+** Draws on work from Phillip Burgess & others   **
+** https://learn.adafruit.com/1500-neopixel-led-curtain-with-raspberry-pi-fadecandy **
 ***************************************************
 */
 
@@ -28,6 +30,10 @@ MQTTClient client;
 MySQL mysql;
 
 Heart[] hearts;
+
+// DisposeHandler tears down the animation on program exit
+// Entirely lifted from Phillip Burgess
+DisposeHandler dh;
 
 // Number of columns and rows in the grid
 int cols = 30;
@@ -79,6 +85,9 @@ void setup() {
             hue
         );
     }
+
+    // Instantiate the DisposeHandler
+    dh  = new DisposeHandler(this);
 
     // BEGIN OPC configuration
 
@@ -232,4 +241,16 @@ void keyPressed() {
       println("<<< MySQL CONNECTION FAILED!");
     }
   }
+}
+
+public class DisposeHandler { // LEDs off when exiting
+    DisposeHandler(PApplet pa) {
+        pa.registerMethod("dispose", this);
+    }
+    public void dispose() {
+        for( int i = 0; i < numHearts * spanLEDs ; i++) {
+            opc.setPixel(i, 0);
+        }
+        opc.writePixels();
+    }
 }
