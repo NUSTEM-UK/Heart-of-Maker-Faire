@@ -48,7 +48,7 @@ int stripLength = (cols / boards) * spanLEDs;
 
 // Performance-sensitive configuration options
 // For Raspberry Pi, set this to 10 for 60fps performance.
-int heartsize = 10;           // pixel width/height
+int heartsize = 40;           // pixel width/height
 boolean drawOutlines = false; // draw cell outline frames?
                               // true arguably looks nicer,
                               // but false is *much* faster, on RPi
@@ -106,25 +106,25 @@ void setup() {
     // First, the left-most column
     // precalculate the horizontal centre
     float xcentre = (cols * heartsize)/6.0;
-    for (int i = 0; i < 16 ; i++) {
-        opc.ledStrip( i * 64, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
+    for (int i = 0; i < rows ; i++) {
+        opc.ledStrip( i * stripLength, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
         println ("Strip " + i + " initialized");
     }
     println( ">>> COLUMN 1 COMPLETE" );
 
     // Centre column. Again, precalculate horizontal centre
     xcentre = (cols * heartsize) / 2.0;
-    for (int i = 0; i < 16 ; i++) {
-        opc.ledStrip( (i+16) * 64, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
-        println ("Strip " + (i+16) + " initialized");
+    for (int i = 0; i < rows ; i++) {
+        opc.ledStrip( (i+rows) * stripLength, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
+        println ("Strip " + (i+rows) + " initialized");
     }
     println( ">>> COLUMN 2 COMPLETE" );
 
     // ...and the rightmost column
     xcentre = ((cols * heartsize) * 5.0)/6.0;
-    for (int i = 0; i < 16 ; i++) {
-        opc.ledStrip( (i + 32) * 64, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
-        println ("Strip " + (i+32) + " initialized");
+    for (int i = 0; i < rows ; i++) {
+        opc.ledStrip( (i + (2*rows)) * stripLength, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
+        println ("Strip " + (i+(2*rows)) + " initialized");
     }
     println( ">>> COLUMN 3 COMPLETE" );
     // END OPC configuration
