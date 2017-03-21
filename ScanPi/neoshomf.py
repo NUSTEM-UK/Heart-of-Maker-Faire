@@ -16,9 +16,25 @@ LED_INVERT     = False   # True to invert the signal (when using NPN transistor 
 strip = Adafruit_NeoPixel(16, 18, 800000, 5, False, 255) # neopixel setup
 strip.begin()
 
+colourDict = {'green':(0,255,0), 'yellow':(255,255,0), 'purple':(0,255,255), 'cyan':(255,0,255), 'blank':(0,0,0)}
+
 def millis():   # a function to return the current time in millis
     millis = int(round(time.time()*1000))
     return millis
+
+def ringSelect(strip, colour, ring, update):
+    if ring == 1:
+        for i in range(16):
+            strip.setPixelColor(i, Color(colourDict[colour]))
+        for i in range(16,32):
+            strip.setPixelColor(i, Color(colourDict['blank']))
+    else:
+        for i in range(16):
+            strip.setPixelColor(i, Color(colourDict['blank']))
+        for i in range(16,32):
+            strip.setPixelColor(i, Color(colourDict[colour]))
+    if update:
+        strip.show()
 
 def pulsefeedback (strip, spread):
     for i in range(8):
@@ -46,13 +62,13 @@ def pulsefeedback (strip, spread):
             strip.setPixelColor(i, Color(0,255,0))
     strip.show()
 
-def pulselight(strip, lasttime, count):
+def pulselight(strip, lasttime, count, rate):
     time.sleep(0.01)
     current_time = millis()
     #what is the elapsed time
     elap_time = current_time - lasttime
     # pulse length is 1 second
-    pulse_length = 2
+    pulse_length = rate
     total_frames = 240
     frame_rate = total_frames / pulse_length
     # multiply the frame rate by the elapsed time accounting for millis
@@ -122,7 +138,7 @@ def hrblink(strip):
     strip.setPixelColor(8, Color(0,0,0))
     strip.show()
     time.sleep(0.1)
-    
+
 def main():
     last_time_checked = int(round(time.time()*1000)) # record the start time
     frame = 0 # set the initial frame to zero for the blinky lights

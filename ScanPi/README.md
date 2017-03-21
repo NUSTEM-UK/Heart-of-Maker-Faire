@@ -94,3 +94,6 @@ And then:
 `sudo pip3 install zbarlight`
 
 Check the functionality by running `python3` and trying `import zbarlight`.
+
+* #### pHat Microdot
+Tutorial taken from here: https://learn.pimoroni.com/tutorial/sandyj/getting-started-with-micro-dot-phat 
