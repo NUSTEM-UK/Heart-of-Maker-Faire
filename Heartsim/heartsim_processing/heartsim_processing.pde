@@ -48,7 +48,7 @@ int stripLength = (cols / boards) * spanLEDs;
 
 // Performance-sensitive configuration options
 // For Raspberry Pi, set this to 10 for 60fps performance.
-int heartsize = 40;           // pixel width/height
+int heartsize = 10;           // pixel width/height
 boolean drawOutlines = false; // draw cell outline frames?
                               // true arguably looks nicer,
                               // but false is *much* faster, on RPi
