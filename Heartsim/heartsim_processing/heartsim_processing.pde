@@ -1,30 +1,33 @@
-/* ************************************************
-** HEARTSIM                                      **
-** Simulates a displayed grid of beating hearts. **
-** Run in Processing3 on a Raspberry PI, which   **
-** also serves as FadeCandy server.              **
-**                                               **
-** Originally built for Maker Faire UK 2017      **
-** by Jonathan Sanderson and Joe Shimwell        **
-** NUSTEM, Northumbria University, Newcastle, UK **
-**                                               **
-** Dependencies:                                 **
-** opc  : Open Pixel Control. See Adafruit docs. **
-** mqtt : Install from Processing GUI.           **
-** SQL  : Install from Processing GUI.           **
-** Requirements:                                 **
-** MySQL server & MQTT broker, assumed to be on  **
-** same host (Pi Zero W)                         **
-**                                               **
-** See Github for full documentation.            **
-** Draws on work from Phillip Burgess & others   **
+/* ***********************************************************************************
+** HEARTSIM                                                                         **
+** Simulates a displayed grid of beating hearts.                                    **
+** Run in Processing3 on a Raspberry PI, which                                      **
+** also serves as FadeCandy server.                                                 **
+**                                                                                  **
+** Originally built for Maker Faire UK 2017                                         **
+** by Jonathan Sanderson and Joe Shimwell                                           **
+** NUSTEM, Northumbria University, Newcastle, UK                                    **
+**                                                                                  **
+** Dependencies:                                                                    **
+** opc  : Open Pixel Control. See Adafruit docs.                                    **
+** mqtt : Install from Processing GUI.                                              **
+** SQL  : Install from Processing GUI.                                              **
+** Requirements:                                                                    **
+** MySQL server & MQTT broker, assumed to be on                                     **
+** same host (Pi Zero W)                                                            **
+**                                                                                  **
+** See Github for full documentation.                                               **
+** Draws on work from Phillip Burgess & others                                      **
 ** https://learn.adafruit.com/1500-neopixel-led-curtain-with-raspberry-pi-fadecandy **
-***************************************************
+**************************************************************************************
 */
 
 OPC opc;
 import mqtt.*;
 import de.bezier.data.sql.*;
+// Comment out next 2 lines for non-Pi platforms
+import processing.io.*;
+boolean isPi = true;
 
 MQTTClient client;
 MySQL mysql;
@@ -52,6 +55,8 @@ int heartsize = 10;           // pixel width/height
 boolean drawOutlines = false; // draw cell outline frames?
                               // true arguably looks nicer,
                               // but false is *much* faster, on RPi
+// Set render mode: true => direct OPC render path, bypassing screen
+boolean renderDirect = true;
 
 // MySQL connection, for disaster recovery or resyncing
 String user = "root";         // Yes, yes. We know.
@@ -65,6 +70,13 @@ void settings() {
 }
 
 void setup() {
+
+    // Set up GPIO interrupt
+    if (isPi) {
+        GPIO.pinMode(4, GPIO.INPUT);
+        GPIO.attachInterrupt(4, this, "pinEvent", GPIO.RISING);
+    }
+
     // Fire up the object array
     hearts = new Heart[numHearts];
     // Now initialise all those lovely hearts
@@ -80,7 +92,7 @@ void setup() {
         // float heartRate = random(50, 150);
         // float heartRate = 120;
         hearts[i] = new Heart(
-            xpos, ypos, heartsize,
+            i, xpos, ypos, heartsize,
             heartRate,
             hue
         );
@@ -94,40 +106,47 @@ void setup() {
     // Connect to the OPC server
     opc = new OPC(this, "127.0.0.1", 7890);
 
-    // Set the location of several LEDs arranged in a strip.
-    // (x,y) is the center of the strip.
-    // void ledStrip(int index, int count, float x, float y, float spacing, float angle, boolean reversed)
+    // If we're calculating the pixels directly, don't need to instantiate all the
+    // strips on the screen. Drat, that would have saved a lot of pencil and paper
+    // maths if I'd only read the documentation earlier.
+    if (!renderDirect) {
+        // Set the location of several LEDs arranged in a strip.
+        // (x,y) is the center of the strip.
+        // void ledStrip(int index, int count, float x, float y, float spacing, float angle, boolean reversed)
 
-    // For most versions, we want the strips to be run in reversed geometry.
-    // This also seems to be marginally faster, which makes no sense to me,
-    // but so it goes.
-    boolean reversed = true;
+        // For most versions, we want the strips to be run in reversed geometry.
+        // This also seems to be marginally faster, which makes no sense to me,
+        // but so it goes.
+        boolean reversed = true;
 
-    // First, the left-most column
-    // precalculate the horizontal centre
-    float xcentre = (cols * heartsize)/6.0;
-    for (int i = 0; i < rows ; i++) {
-        opc.ledStrip( i * stripLength, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
-        println ("Strip " + i + " initialized");
+        // First, the left-most column
+        // precalculate the horizontal centre
+        float xcentre = (cols * heartsize)/6.0;
+        for (int i = 0; i < rows ; i++) {
+            opc.ledStrip( i * stripLength, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
+            println ("Strip " + i + " initialized");
+        }
+        println( ">>> COLUMN 1 COMPLETE" );
+
+        // Centre column. Again, precalculate horizontal centre
+        xcentre = (cols * heartsize) / 2.0;
+        for (int i = 0; i < rows ; i++) {
+            opc.ledStrip( (i+rows) * stripLength, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
+            println ("Strip " + (i+rows) + " initialized");
+        }
+        println( ">>> COLUMN 2 COMPLETE" );
+
+        // ...and the rightmost column
+        xcentre = ((cols * heartsize) * 5.0)/6.0;
+        for (int i = 0; i < rows ; i++) {
+            opc.ledStrip( (i + (2*rows)) * stripLength, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
+            println ("Strip " + (i+(2*rows)) + " initialized");
+        }
+        println( ">>> COLUMN 3 COMPLETE" );
+        // END OPC configuration
+    } else {
+        println( ">>> LIVING DANGEROUSLY WITH THE DIRECT RENDERER" );
     }
-    println( ">>> COLUMN 1 COMPLETE" );
-
-    // Centre column. Again, precalculate horizontal centre
-    xcentre = (cols * heartsize) / 2.0;
-    for (int i = 0; i < rows ; i++) {
-        opc.ledStrip( (i+rows) * stripLength, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
-        println ("Strip " + (i+rows) + " initialized");
-    }
-    println( ">>> COLUMN 2 COMPLETE" );
-
-    // ...and the rightmost column
-    xcentre = ((cols * heartsize) * 5.0)/6.0;
-    for (int i = 0; i < rows ; i++) {
-        opc.ledStrip( (i + (2*rows)) * stripLength, stripLength, xcentre, (heartsize * i)+(heartsize/2), (heartsize/spanLEDs), 0, true );
-        println ("Strip " + (i+(2*rows)) + " initialized");
-    }
-    println( ">>> COLUMN 3 COMPLETE" );
-    // END OPC configuration
 
     // BEGIN MQTT configuration
     // Initialise the MQTT connection
@@ -172,6 +191,10 @@ void draw() {
     // If we're badly dropping frames, tell the console
     if (frameRate < 58 ) {
         println(frameRate);
+    }
+
+    if (renderDirect) {
+        opc.writePixels();
     }
 
     // ...and around we go again
@@ -224,6 +247,16 @@ void keyPressed() {
   // This acts as an automatic callback during draw()
   if (key == 82 ) {
     println(">>> EMERGENCY! SQL RELOAD REQUESTED!");
+    emergencyReload();
+  }
+}
+
+void pinEvent(int pin) {
+    println("Panic button pressed!");
+    emergencyReload();
+}
+
+void emergencyReload() {
     if ( mysql.connect() ) {
       // Pull the data then step through it, rewriting the Hearts' rates
       mysql.query( "SELECT * from heart_store");
@@ -240,7 +273,6 @@ void keyPressed() {
     } else {
       println("<<< MySQL CONNECTION FAILED!");
     }
-  }
 }
 
 public class DisposeHandler { // LEDs off when exiting

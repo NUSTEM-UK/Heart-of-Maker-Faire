@@ -4,22 +4,24 @@ class Heart {
     // A cell object knows about its location in the grid
     // as well as its size with the variables x,y,w,h
 
-    int x,y;             // x,y location
-    int size;            // width and height
-    float rate;            // Target heartrate
+    int heartNumber;        // Which heart am I?
+    int x,y;                // x,y location
+    int size;               // width and height
+    float rate;             // Target heartrate
     // int[] frames;        // animation frames (array)
-    int hue;             // What colour are we?
-    int targetHue;       // Colour we're transitioning to
-    int framesToGo;      // How long before we get to targetColor?
-    int mag;           // Current brightness
-    int numFrames;      // Total number of frames in animation
+    int hue;                // What colour are we?
+    int targetHue;          // Colour we're transitioning to
+    int framesToGo;         // How long before we get to targetColor?
+    int mag;                // Current brightness
+    int numFrames;          // Total number of frames in animation
 
-    float step;           // step for animation processing
-    int currentAnimFrame; // current animation frame
+    float step;             // step for animation processing
+    int currentAnimFrame;   // current animation frame
     float angle;
 
     // Cell Constructor
-    Heart(int t_x, int t_y, int t_size, float t_rate, float t_hue) {
+    Heart(int t_num, int t_x, int t_y, int t_size, float t_rate, float t_hue) {
+        heartNumber = t_num;
         x = t_x;
         y = t_y;
         size = t_size;
@@ -85,15 +87,21 @@ class Heart {
     }
 
     void display() {
-        // Setting noStroke() doubles available frame rate
-        // Set noStroke() for Raspberry Pi 60fps.
-        if (drawOutlines) {
-          stroke(255);
+        if (renderDirect) {
+            for (int i = 0; i < spanLEDs; i++) {
+                opc.setPixel( ((heartNumber * spanLEDs) + i), color(hue, 255, mag) );
+            }
         } else {
-          noStroke();
+            // Setting noStroke() doubles available frame rate
+            // Set noStroke() for Raspberry Pi 60fps.
+            if (drawOutlines) {
+              stroke(255);
+            } else {
+              noStroke();
+            }
+            // fill(127+127*sin(angle), 255, 255);
+            fill(hue, 255, mag);
+            rect(x,y,size,size);
         }
-        // fill(127+127*sin(angle), 255, 255);
-        fill(hue, 255, mag);
-        rect(x,y,size,size);
     }
 }
