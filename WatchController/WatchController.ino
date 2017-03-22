@@ -10,11 +10,13 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-// Sequence here is RED, ORANGE, BLUE, GREEN
+// Sequence here is YELLOW, ORANGE, CYAN, GREEN
 int numButtons = 4;
-String colours[] = { "RED", "ORANGE", "BLUE", "GREEN" };
+String colours[] = { "YELLOW", "ORANGE", "CYAN", "GREEN" };
 int lights[] = { 0, 14, 15, 16 };
 int buttons[] = {4, 5, 12, 13};
+// Temporary storage for heart references:
+int hearts[4] = {};
 
 const char* ssid = "nustem";
 const char* password = "nustem123";
@@ -37,10 +39,11 @@ char skutterNameArray[60];
 
 void setup() {
   Serial.begin(115200);
-  
+
   for (int i = 0 ; i < numButtons ; i++) {
     pinMode(lights[i], OUTPUT);
     pinMode(buttons[i], INPUT_PULLUP);
+    digitalWrite(lights[i], LOW);
   }
 
   setup_wifi();
@@ -50,7 +53,7 @@ void setup() {
   skutterNameString = "skutter_" + huzzahMACAddress;
   Serial.println(skutterNameString);
   skutterNameString.toCharArray(skutterNameArray, 60);
-  
+
   // For testing purposes, subscribe to everything in this namespace
   subsTopicString = "heart/#";
   subsTopicString.toCharArray(subsTopicArray, 60);
@@ -68,19 +71,18 @@ void loop() {
     reconnect();
   }
   client.loop();
-  
-  for (int i = 0; i < numButtons; i++) {
-    digitalWrite(lights[i], HIGH);
 
-    buttonRead();
-    delay(1000);
-  }
-  for (int i = 0 ; i < numButtons; i++) {
-    digitalWrite(lights[i], LOW);
-    buttonRead();
-    delay(1000);
-  }
-  
+//  for (int i = 0; i < numButtons; i++) {
+//    digitalWrite(lights[i], HIGH);
+//    buttonRead();
+//    delay(100);
+//  }
+//  for (int i = 0 ; i < numButtons; i++) {
+//    digitalWrite(lights[i], LOW);
+//    buttonRead();
+//    delay(100);
+//  }
+
 }
 
 
@@ -88,10 +90,10 @@ void buttonRead() {
   // Buttons return 1 when unpressed, 0 when pressed (short to GND)
   for (int i = 0; i < numButtons; i++) {
     int value = digitalRead(buttons[i]);
-    Serial.print("Button: ");
-    Serial.print(colours[i]);
-    Serial.print(" State: ");
-    Serial.println(value);
+//    Serial.print("Button: ");
+//    Serial.print(colours[i]);
+//    Serial.print(" State: ");
+//    Serial.println(value);
   }
 }
 
@@ -121,6 +123,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
     // Find the index position of the first /, if any
     pieceEnd = topicString.indexOf('/');
 
+
+    // This is a horribly ugly way of parsing the MQTT topic, but
+    // on the other hand, it works. So I'm not going to mess around.
+    // ... for now.
     if (pieceEnd != -1) {
         // Pull the first part of the topic
         subString = topicString.substring(0, pieceEnd);
@@ -146,19 +152,54 @@ void callback(char* topic, byte* payload, unsigned int length) {
                 Serial.print(topicString);
                 Serial.print(" and value: ");
                 Serial.println(payloadString);
-            }
-            
-        }
-    }
+
+                if (topicString == "setMode") {
+                    if (payloadString == "yellow") {
+                        // Assign heartNum to store
+                        hearts[0] = heartNum;
+                        // Turn on appropriate button
+                        digitalWrite(lights[0], HIGH);
+                        Serial.print("YELLOW channel assigned to heart: ");
+                        Serial.println(hearts[0]);
+                    } else if (payloadString == "orange") {
+                        hearts[1] = heartNum;
+                        digitalWrite(lights[1], HIGH);
+                        Serial.print("ORANGE channel assigned to heart: ");
+                        Serial.println(hearts[1]);
+                    } else if (payloadString == "green") {
+                        hearts[2] = heartNum;
+                        digitalWrite(lights[2], HIGH);
+                        Serial.print("GREEN channel assigned to heart: ");
+                        Serial.println(hearts[2]);
+                    } else if (payloadString == "cyan") {
+                        hearts[3] = heartNum;
+                        digitalWrite(lights[3], HIGH);
+                        Serial.print("CYAN channel assigned to heart: ");
+                        Serial.println(hearts[3]);
+                    } else if (payloadString == "clear") {
+                        for (int i = 0; i < numButtons; i++) {
+                          // Look to see if the target heart is referenced in our
+                          // colour array. If so, it must have been cleared elsewhere,
+                          // so update our state to reflect the global state
+                            if (hearts[i] == heartNum) {
+                                // Turn off the appropriate light
+                                digitalWrite(lights[i], LOW);
+                            }
+                        }
+                    } // end of what would be a switch(), if we could do that on a String
+                } // setMode
+            } // pieceEnd
+        } // heart
+
+    } // pieceEnd test - have we more MQTT topic String to go?
 
     // Chuck the payload back to the root topic, as a demo
     // Payload needs to be a char* array, so we first make that:
-
     // Wrap this in a test so we don't flood the channel in this example.
     // ...not that I did that. Ahem.
     if ( heartNum != 0 ) {
         payloadString.toCharArray(tempBuffer, 60);
         client.publish("heart/00/test", tempBuffer);
     }
-}
 
+} // callback
