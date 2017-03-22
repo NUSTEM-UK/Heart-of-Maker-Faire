@@ -1,15 +1,23 @@
 import paho.mqtt.client as mqtt
+from sqlhomf import *
 import time
 
-qos = 1
-hiccup = 0.01
+def on_message(client, userdata, msg):
+    """Output diagnostic when message sent via broker."""
+    msg.payload = msg.payload.decode("utf-8")
+    if msg.payload == "clear":
+        m = re.search('heart/(.+?)/setMode', msg.topic)
+        if m:
+            cellNum = int(m.group(1))
+            print(cellNum)
+            watch_colour_reset(conn, cellNum)
 
-try:
-    client = mqtt.Client()
-    client.connect('192.168.1.1')
-    client.loop_start()
-except:
-    print("Error connecting to MQTT, are you on the correct network?")
+def on_connect(client, userdata, rc):
+    # Connect to MQTT broker.
+    print ("Connected with result code: " + str(rc))
+    # We can subscribe to wildcard topics, which are matched
+    # as new topics are created.
+    client.subscribe("heart/#")
 
 def MQTTsend(location, status, data):
     # turn the data into a string
@@ -23,10 +31,19 @@ def MQTTsend(location, status, data):
     client.publish(setRateString, data, 1)
     time.sleep(0.01)
 
+try:
+    client = mqtt.Client()
+    client.connect('192.168.1.1')
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.loop_start()
+except:
+    print("Error connecting to MQTT, are you on the correct network?")
+
 if __name__ == '__main__':
     print("Sending data...")
     try:
-        MQTTsend(244, 0, 56, 1)
+        MQTTsend(244, , 56, 1)
         print("Data sent")
     except:
         print("Error sending data...")

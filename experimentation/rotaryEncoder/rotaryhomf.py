@@ -1,6 +1,6 @@
 from RPi import GPIO
 from gpiozero import Button
-from time import sleep
+from time import sleep, time
 from microdotphat import write_string, set_decimal, clear, show
 from neoshomf import *
 
@@ -27,6 +27,7 @@ def heartEncoder():
     counter = 40
     clkLastState = GPIO.input(clkPin)
     clear()
+    last_time_checked = int(round(time.time()*1000))
     while True:
         last_time_checked, frame = pulselight(strip, last_time_checked, frame, 60/counter) # Can I make the neopixel ring pulse with HR
         clkState = GPIO.input(clkPin)

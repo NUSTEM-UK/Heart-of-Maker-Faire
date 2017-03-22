@@ -35,7 +35,7 @@ def main():
                 ringSelect(strip, status, 2, True)
                 setEncoderColour(status)
                 heartrate = heartEncoder()
-                if status == False:
+                if status == False: # what if we've run out of indication colours
                     continue
                 update_heart(conn, cell_num, scannedQR, heartrate)
                 MQTTsend(cell_num, status, heartrate)

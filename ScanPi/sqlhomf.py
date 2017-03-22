@@ -15,14 +15,14 @@ def create_heartwatch_table(conn):
     c = conn.cursor()
     c.execute("""DROP TABLE IF EXISTS heart_watch""")
     c.execute("""CREATE TABLE IF NOT EXISTS heart_watch
-                (colour char(20), status int)""")
+                (colour char(20), status int, heartNum int)""")
     colours = ["green", "yellow", 'purple', 'cyan']
     for i in colours:
         c.execute(""" INSERT INTO heart_watch (colour, status)
                     VALUES ('%s', '%d')""" % (i, 0))
     conn.commit()
 
-def watch_colour_picker(conn):
+def watch_colour_picker(conn, cellNum):
     #First select a currently unused colour
     c = conn.cursor()
     c.execute("""SELECT * FROM heart_watch WHERE status = 0""")
@@ -40,13 +40,15 @@ def watch_colour_picker(conn):
     # Lock in that colour choice
     c.execute("""UPDATE heart_watch SET status = 1 WHERE
                 colour = '%s'""" % chosenColour )
+    c.execute("""UPDATE heart_watch SET heartNum = %d WHERE
+                colour = '%s'""" % cellNum, chosenColour )
     conn.commit()
     return chosenColour
 
-def watch_colour_reset(conn, colour):
+def watch_colour_reset(conn, cellNum):
     c = conn.cursor()
     c.execute("""UPDATE heart_watch SET status = 0 WHERE
-                colour = '%s'""" % colour)
+                heartNum = '%d'""" % cellNum)
     conn.commit()
 
 def create_new_table(conn, populate):
