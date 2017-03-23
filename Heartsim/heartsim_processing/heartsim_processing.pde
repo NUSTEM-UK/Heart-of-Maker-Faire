@@ -256,6 +256,7 @@ void keyPressed() {
 void pinEvent(int pin) {
     println("Panic button pressed!");
     emergencyReload();
+    delay(100); // rustic debounce
 }
 
 void emergencyReload() {
