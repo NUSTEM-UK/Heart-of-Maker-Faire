@@ -3,7 +3,7 @@
 (originally compiled from Feather Huzzah notes, so... might not actually be true.)
 
 | Ard #  | D1 #   | Note                                     | Assigned      |
-|:------:|:------:|------------------------------------------|---------------|
+|:------:|:------:|:-----------------------------------------|:--------------|
 |  0     |  D3    | No PUP. Flashes red LED. Use as output.  | YELLOW LED    |
 |  2     |  D4    | Boot mode, blue LED. Use as output.      | Wifi status   |
 | 12     |  D6    |                                          | YELLOW SWITCH |

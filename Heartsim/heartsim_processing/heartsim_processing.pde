@@ -217,12 +217,22 @@ void messageReceived(String topic, byte[] payload) {
       // ...and the command we're sending it
       String command = topicParts[2];
 
-      // Handle setMode = update
+      // Handle setMode = [colour]
       if (command.equals("setMode")) {
-        if (payloadString.equals("update")) {
-          // Set random colour for this heart
-          hearts[heartNum].setColour(random(255), 1.0);
-        }
+          if (payloadString.equals("yellow")) {
+              hearts[heartNum].setColour(42.5, 1.0);
+          } else if (payloadString.equals("cyan")) {
+              hearts[heartNum].setColour(127.0, 1.0);
+          } else if (payloadString.equals("green")) {
+              hearts[heartNum].setColour(85.0, 1.0);
+          } else if (payloadString.equals("orange")) {
+              hearts[heartNum].setColour(31.2, 1.0);
+          } else if (payloadString.equals("magenta")) {
+              hearts[heartNum].setColour(212.5, 1.0);
+          } else if (payloadString.equals("clear")) {
+              // Change the colour to red over 5 seconds
+              hearts[heartNum].setColour(0.0, 5.0);
+          }
       }
 
       // Handle setRate command
@@ -231,14 +241,6 @@ void messageReceived(String topic, byte[] payload) {
         hearts[heartNum].setRate(Integer.parseInt(payloadString));
       }
 
-      // Handle setMode = clear
-      if (command.equals("setMode")) {
-        if (payloadString.equals("clear")) {
-          // Change the colour to red over 5 seconds
-          hearts[heartNum].setColour(0.0, 5.0);
-          // Could send an acknowledgement here
-        }
-      }
     } // if topicParts.length
 } // messageReceived
 
