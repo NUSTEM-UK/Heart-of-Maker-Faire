@@ -10,9 +10,9 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-// Sequence here is YELLOW, ORANGE, GREEN, CYAN
+// Sequence here is MAGENTA, YELLOW, GREEN, CYAN
 int numButtons = 4;
-String colours[] = { "YELLOW", "ORANGE", "GREEN", "CYAN" }; // not used, in the end
+String colours[] = { "MAGENTA", "YELLOW", "GREEN", "CYAN" }; // not used, in the end
 int lights[] = { 0, 14, 16, 15 };
 int buttons[] = {12, 4, 5, 13};
 // Temporary storage for heart references:
@@ -158,17 +158,17 @@ void callback(char* topic, byte* payload, unsigned int length) {
                 // Look to see if setMode called
                 if (topicString == "setMode") {
                     // Check for colour channel assignment, and handle each
-                    if (payloadString == "yellow") {
+                    if (payloadString == "magenta") {
                         // Assign heartNum to store
                         hearts[0] = heartNum;
                         // Turn on appropriate button
                         digitalWrite(lights[0], HIGH);
-                        Serial.print("YELLOW channel assigned to heart: ");
+                        Serial.print("MAGENTA channel assigned to heart: ");
                         Serial.println(hearts[0]);
-                    } else if (payloadString == "orange") {
+                    } else if (payloadString == "yellow") {
                         hearts[1] = heartNum;
                         digitalWrite(lights[1], HIGH);
-                        Serial.print("ORANGE channel assigned to heart: ");
+                        Serial.print("YELLOW channel assigned to heart: ");
                         Serial.println(hearts[1]);
                     } else if (payloadString == "green") {
                         hearts[2] = heartNum;
