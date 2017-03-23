@@ -14,7 +14,7 @@
 int numButtons = 4;
 String colours[] = { "YELLOW", "ORANGE", "GREEN", "CYAN" }; // not used, in the end
 int lights[] = { 0, 14, 16, 15 };
-int buttons[] = {4, 5, 13, 12};
+int buttons[] = {12, 4, 5, 13};
 // Temporary storage for heart references:
 int hearts[4] = {};
 
