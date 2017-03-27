@@ -48,6 +48,7 @@ int boards = 3;
 // Across how many LEDs does each heart span?
 int spanLEDs = 5;
 int stripLength = (cols / boards) * spanLEDs;
+float defaultHue = 165.0; // holding pattern blue
 
 // Performance-sensitive configuration options
 // For Raspberry Pi, set this to 10 for 60fps performance.
@@ -87,7 +88,7 @@ void setup() {
         int ypos = abs(i / cols) * heartsize;
         // float hue = random(255);
         // float hue = 0;   // Red!
-        float hue = 165; // Blue!
+        float hue = defaultHue; // Blue!
         float heartRate = 0.0; // Empty data
         // float heartRate = random(50, 150);
         // float heartRate = 120;

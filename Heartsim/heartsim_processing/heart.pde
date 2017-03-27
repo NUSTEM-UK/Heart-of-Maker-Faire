@@ -65,12 +65,14 @@ class Heart {
             // We have a heart rate, so
             // Pick frame from beat simulation
             mag = frames[currentAnimFrame];
+        } else if (hue != defaultHue) {
+            // Play higher-range animation for more obvious locating of cell
+            mag = framesDefaultHigh[currentAnimFrame];
         } else {
             // We don't have an assigned rate, so
             // Pick frame from default animation
             mag = framesDefault[currentAnimFrame];
         }
-
 
         // Handle colour animation
         if (hue != targetHue && framesToGo < 2) {
