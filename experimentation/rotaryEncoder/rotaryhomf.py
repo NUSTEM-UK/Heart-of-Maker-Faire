@@ -38,6 +38,7 @@ def heartEncoder():
             else:
                 counter -= 1
         clkLastState = clkState
+<<<<<<< Updated upstream
         write_string(str(int(counter/2)), kerning = False)
         show()
         #if button.is_pressed():
@@ -46,3 +47,10 @@ def heartEncoder():
         #sleep(0.001)
 while True:
     heartEncoder()
+=======
+        write_string(str(counter/2), kerning = False)
+        show()
+        if button.is_pressed():
+            # do a triple flash
+            return counter/2
+>>>>>>> Stashed changes
