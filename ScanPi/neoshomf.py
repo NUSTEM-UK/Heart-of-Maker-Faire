@@ -60,24 +60,15 @@ def neocleanup(strip):
         strip.setPixelColor(i, Color(0,0,0))
     strip.show()
 
-def hrblink(strip):
-    strip.setBrightness(255)
-    strip.setPixelColor(8, Color(0,255,0))
-    strip.show()
-    time.sleep(0.1)
-    strip.setPixelColor(8, Color(0,0,0))
-    strip.show()
-    time.sleep(0.1)
-
 def main():
-    
+
     ringSelect(strip, 'green', 1, True)
     last_time_checked = int(round(time.time()*1000)) # record the start time
     frame = 0 # set the initial frame to zero for the blinky lights
     while True:
         last_time_checked, frame = pulselight(strip, last_time_checked, frame, 100)
-    
-    
+
+
 if __name__ == '__main__':
     try:
         main()

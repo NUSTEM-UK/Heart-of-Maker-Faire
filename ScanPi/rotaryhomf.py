@@ -93,6 +93,6 @@ def encoder(colour):
 if __name__ == '__main__':
     while True:
         greenB.on()
-    
+
     #print(encoder('magenta'))
     neocleanup(strip)
