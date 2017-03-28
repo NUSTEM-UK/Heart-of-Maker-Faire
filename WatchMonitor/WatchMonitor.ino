@@ -27,10 +27,12 @@ const char* ssid = "nustem";
 const char* password = "nustem123";
 const char* mqtt_server = "192.168.1.1";
 
+String sendTopicString;
 String subsTopicString;
 char subsTopicArray[100];
 char tempBuffer[60];      // Temp for MQTT publish string/array conversions
 char tempBuffer2[60];
+String sendPayloadString;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -46,22 +48,32 @@ void setup() {
     Serial.begin(115200);
     delay(10);
     setup_wifi();
+
+    // hard-code heart number and MQTT send channel
+    sendTopicString = "heart/999/setRate";
+    //sendTopicString = "heart/998/setRate";
   
     // Get this Huzzah's MAC address and use it to register with the MQTT server
     huzzahMACAddress = WiFi.macAddress();
     skutterNameString = "skutter_" + huzzahMACAddress;
     Serial.println(skutterNameString);
     skutterNameString.toCharArray(skutterNameArray, 60);
-
+    
     flipper.attach_ms(2, Test);
 }
 
 void loop() {
 
+    delay(1000);
+    sendTopicString.toCharArray(tempBuffer2, 60);
+    sendPayloadString = BPM;
+    sendPayloadString.toCharArray(tempBuffer, 60);
+    client.publish(tempBuffer2, tempBuffer);
+    Serial.print("Sent : ");
+    Serial.print(tempBuffer2);
+    Serial.print(" message: ");
+    Serial.println(tempBuffer);
     
-//    int BPM 
-//    ...is value to send on desired channel.
-
     flipper.attach_ms(2, Test);
   
 }
