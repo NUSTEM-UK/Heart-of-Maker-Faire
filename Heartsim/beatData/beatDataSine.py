@@ -6,6 +6,6 @@ samples = 240
 
 for i in xrange(240):
     mag = math.sin((2 * math.pi * i)/240) + 2
-    scaledMag = mag * 30.0
+    scaledMag = mag * 80.0
     roundedScaledMag = round(scaledMag)
     print(str(int(roundedScaledMag)) + ",")
