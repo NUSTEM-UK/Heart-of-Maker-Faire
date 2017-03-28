@@ -17,6 +17,7 @@ def main():
     while True:
         ringSelect(strip, 'green', 1, False)
         last_time_checked, frame = pulselight(strip, last_time_checked, frame, 60) # get the current pulse frame
+        print(ldr.value)
         if (ldr.value > 0.9):   # a heart has been placed on the scanner
             print("Heart detected")
             ringSelect(strip, 'cyan', 1, True)
