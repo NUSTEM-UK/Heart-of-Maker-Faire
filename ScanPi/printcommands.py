@@ -5,4 +5,4 @@ to the terminal"""
 import os
 def HRprinter(QRcode, heartrate, status):
     print("Printing")
-    os.system("python printerhomf.py " +str(QRcode) + " " + str(status) + " " + colour + " &")
+    os.system("python printerhomf.py " +str(QRcode) + " " + str(heartrate) + " " + status + " &")

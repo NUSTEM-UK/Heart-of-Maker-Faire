@@ -1,11 +1,14 @@
 import paho.mqtt.client as mqtt
 from sqlhomf import *
 import time
+import re
 
 def on_message(client, userdata, msg):
     """Output diagnostic when message sent via broker."""
     msg.payload = msg.payload.decode("utf-8")
+    print('Message received')
     if msg.payload == "clear":
+        print('We made it')
         m = re.search('heart/(.+?)/setMode', msg.topic)
         if m:
             cellNum = int(m.group(1))
@@ -41,9 +44,12 @@ except:
     print("Error connecting to MQTT, are you on the correct network?")
 
 if __name__ == '__main__':
+    time.sleep(2)
     print("Sending data...")
     try:
-        MQTTsend(244, , 56, 1)
+        MQTTsend(60,'clear', 65)
         print("Data sent")
     except:
         print("Error sending data...")
+    while True:
+        pass
