@@ -15,38 +15,42 @@ def create_heartwatch_table(conn):
     c = conn.cursor()
     c.execute("""DROP TABLE IF EXISTS heart_watch""")
     c.execute("""CREATE TABLE IF NOT EXISTS heart_watch
-                (colour char(20), status int)""")
-    colours = ["green", "yellow", 'purple', 'cyan']
+                (colour char(20), status int, heartNum int)""")
+    colours = ["green", "yellow", 'magenta', 'cyan']
     for i in colours:
-        c.execute(""" INSERT INTO heart_watch (colour, status)
-                    VALUES ('%s', '%d')""" % (i, 0))
+        c.execute(""" INSERT INTO heart_watch (colour, status, heartNum)
+                    VALUES ('%s', '%d', '%d')""" % (i, 0, 0))
     conn.commit()
 
-def watch_colour_picker(conn):
+def watch_colour_picker(conn, cellNum):
     #First select a currently unused colour
     c = conn.cursor()
     c.execute("""SELECT * FROM heart_watch WHERE status = 0""")
     rows = c.fetchall()
-    print(rows)
     if not rows: # if all four colurs have been chosen return False
         return False
     randomChoice = random.randint(0, len(rows)-1)
-    print(randomChoice)
     chosenRow = rows[randomChoice]
-    print(chosenRow)
     chosenColour = str(chosenRow[0])
     print(chosenColour)
 
     # Lock in that colour choice
-    c.execute("""UPDATE heart_watch SET status = 1 WHERE
-                colour = '%s'""" % chosenColour )
+    sql = """ UPDATE heart_watch
+              SET status = 1 
+              WHERE  colour = '%s' """ % chosenColour
+    c.execute(sql)
+    conn.commit()
+    c.execute("""UPDATE heart_watch SET heartNum = %d WHERE
+                colour = '%s'""" % (cellNum, chosenColour))
     conn.commit()
     return chosenColour
 
-def watch_colour_reset(conn, colour):
+def watch_colour_reset(conn, cellNum):
     c = conn.cursor()
     c.execute("""UPDATE heart_watch SET status = 0 WHERE
-                colour = '%s'""" % colour)
+                heartNum = '%d'""" % cellNum)
+    c.execute("""UPDATE heart_watch SET heartNum = 0 WHERE
+                heartNum = '%d'""" % cellNum)
     conn.commit()
 
 def create_new_table(conn, populate):
@@ -141,4 +145,9 @@ except:
     pass
 
 if __name__ == "__main__":
-    watch_colour_picker(conn)
+    try:
+        create_heartwatch_table(conn)
+    except KeyboardInterrupt:
+        print('End Prog')
+        conn.close()
+
