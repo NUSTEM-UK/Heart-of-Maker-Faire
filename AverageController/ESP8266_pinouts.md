@@ -5,7 +5,7 @@
 |  0     |  D3    | No PUP. Flashes red LED. Use as output.  |                |
 |  2     |  D4    | Boot mode, blue LED. Use as output.      |                |
 | 12     |  D6    |                                          |                |
-|  4     |  D2    |                                          |                |
+|  4     |  D2    |                                          | NeoPixels      |
 | 13     |  D7    |                                          |                |
 |  5     |  D1    |                                          |                |
 | 14     |  D5    |                                          |                |
