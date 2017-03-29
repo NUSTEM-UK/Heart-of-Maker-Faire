@@ -25,7 +25,14 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+def printing():
+    clear()
+    write_string('Printing...')
+    scroll()
+    show()
+
 def encoder(colour):
+    clear()
     ringSelect(strip, colour, 0, True)
     last_time_checked = int(round(time.time()*1000)) # record the start time
     frame = 0 # set the initial frame to zero for the blinky lights
@@ -70,7 +77,7 @@ def encoder(colour):
                     counter = 80
 
 # Add the leading spaces
-            print(len(str(int(counter/2))))
+            #print(len(str(int(counter/2))))
             if len(str(int(counter/2))) == 2:
                 countString = "   " + str(int(counter/2))
             else:
@@ -88,6 +95,8 @@ def encoder(colour):
             red.off()
             blue.off()
             green.off()
+            clear()
+            show()
             return int(counter/2)
 
 if __name__ == '__main__':

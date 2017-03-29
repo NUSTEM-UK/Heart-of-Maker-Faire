@@ -10,7 +10,7 @@ status = sys.argv[3].upper()
 
 def qrprintout(heartRate, qrCode, status):
 
-    print(data)
+    print('Printing')
     #Thank you for contributing to the heart of maker Faire
     #print in centre
     printer.justify('C')
@@ -58,3 +58,4 @@ if __name__ == '__main__':
     filename = "QRbytes/" + str(location) + ".py"
     execfile(filename)
     qrprintout(hr, location, status)
+

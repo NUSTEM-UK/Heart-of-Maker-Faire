@@ -18,6 +18,12 @@ strip.begin()
 
 colourDict = {'green':(255,0,0), 'yellow':(255,255,0), 'magenta':(0,255,255), 'cyan':(255,0,255), 'blank':(0,0,0), 'red':(0,255,0)}
 
+def countdown():
+    for i in range(16,32):
+        strip.setPixelColor(i, Color(0,0,0))
+        strip.show()
+        time.sleep(28/16)
+
 def millis():   # a function to return the current time in millis
     millis = int(round(time.time()*1000))
     return millis

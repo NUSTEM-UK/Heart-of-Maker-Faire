@@ -17,10 +17,11 @@ def main():
     while True:
         ringSelect(strip, 'green', 1, False)
         last_time_checked, frame = pulselight(strip, last_time_checked, frame, 60) # get the current pulse frame
-        print(ldr.value)
-        if (ldr.value > 0.9):   # a heart has been placed on the scanner
+        #print(ldr.value)
+        if (ldr.value > 0.9) or button.is_pressed:   # a heart has been placed on the scanner
             print("Heart detected")
             ringSelect(strip, 'cyan', 1, True)
+            time.sleep(2) # positioning delay
             scannedQR = QRread()    # read the QR on the heart
 
             if scannedQR == False:  # if zbar can't read the QR code
@@ -44,6 +45,10 @@ def main():
                 update_heart(conn, cell_num, scannedQR, heartrate)
                 MQTTsend(cell_num, status, heartrate)
                 HRprinter(scannedQR, heartrate, status)
+                #printing()
+                countdown()
+                #clear()
+                #show()
                 repeatcode = False
             else:
                 pass
