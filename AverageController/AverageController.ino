@@ -93,6 +93,7 @@ void loop() {
 }
 
 void strandUpdate() {
+    updateTicker.detach();
     // Calulate how many frames to advance
     step = rate/240.0 * (FPS / 4.0);
     // Advance by that many frames
@@ -107,10 +108,12 @@ void strandUpdate() {
 
     // Flush to the strip
     strip.show();
+    updateTicker.attach_ms(1000.0/FPS, strandUpdate);
 }
 
 // Handle MQTT message receipt
 void callback(char* topic, byte* payload, unsigned int length) {
+    updateTicker.detach();
 
     // Convert topic and message to C++ String types, for ease of handling
     String payloadString;
@@ -167,4 +170,5 @@ void callback(char* topic, byte* payload, unsigned int length) {
             }
         } // heart
     } // pieceEnd
+    updateTicker.attach_ms(1000.0/FPS, strandUpdate);
 } // MQTT callback
