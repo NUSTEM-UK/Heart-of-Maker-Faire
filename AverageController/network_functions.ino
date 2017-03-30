@@ -32,6 +32,8 @@ void reconnect() {
     if (client.connect(skutterNameArray)) {
       Serial.println("connected");
       client.subscribe(subsTopicArray);
+      Serial.print("Subscribed to ");
+      Serial.println(subsTopicArray);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());

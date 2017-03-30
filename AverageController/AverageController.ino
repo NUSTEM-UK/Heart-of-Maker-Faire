@@ -1,7 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <Adafruit_NeoPixel.h>
-#include <Ticker.h>
 
 // NeoPixel strip settings
 #define NeoPIN 4
@@ -27,13 +26,15 @@ String huzzahMACAddress;
 String skutterNameString;
 char skutterNameArray[60];
 
-// Update timer
-Ticker updateTicker;
-
 // Current animation position
 int rate;
-int currentAnimFrame;
+float currentAnimFrame;
 float step;
+int numFrames;
+
+int lastTime = millis();
+int currentTime = millis();
+int sixtieth = (int)1000.0/FPS;
 
 int frames[] = {
     78, 78, 78, 78, 78, 78, 78, 78, 79, 79, 80, 81, 83, 85, 87, 90, 94, 99,
@@ -67,7 +68,7 @@ void setup() {
     skutterNameString.toCharArray(skutterNameArray, 60);
 
     // Subscribe to the `average` heart
-    subsTopicString = "heart/average";
+    subsTopicString = "heart/average/setRate";
     subsTopicString.toCharArray(subsTopicArray, 60);
     client.setServer(mqtt_server, 1883);
     // Set up callback to handle payloads on this topic
@@ -78,28 +79,33 @@ void setup() {
     strip.show();
 
     // Start from the first frame of the animation
-    currentAnimFrame = 0;
+    currentAnimFrame = 0.0;
     // assume starting rate of 60bpm
     rate = 60;
-
-    // Configure the update timer
-    updateTicker.attach_ms(1000.0/FPS, strandUpdate);
+    numFrames = 240;
+    
 }
 
 void loop() {
     if (!client.connected()) {
     reconnect();
     }
+
+    currentTime = millis();
+    if (currentTime - lastTime > sixtieth) {
+      strandUpdate();
+      lastTime = millis();
+    }
 }
 
 void strandUpdate() {
-    updateTicker.detach();
     // Calulate how many frames to advance
     step = rate/240.0 * (FPS / 4.0);
     // Advance by that many frames
-    currentAnimFrame += round(step);
-    // Get magnitude (of red channel)
-    int mag = frames[currentAnimFrame];
+    currentAnimFrame += step;
+    currentAnimFrame = (int)currentAnimFrame % numFrames;
+    // Get magnitude (of red channel) (at desired index)
+    int mag = frames[round(currentAnimFrame)];
 
     // Update the strand
     for (int i = 0 ; i < strandLength ; i++) {
@@ -108,13 +114,11 @@ void strandUpdate() {
 
     // Flush to the strip
     strip.show();
-    updateTicker.attach_ms(1000.0/FPS, strandUpdate);
 }
 
 // Handle MQTT message receipt
 void callback(char* topic, byte* payload, unsigned int length) {
-    updateTicker.detach();
-
+    
     // Convert topic and message to C++ String types, for ease of handling
     String payloadString;
     String subString;
@@ -170,5 +174,4 @@ void callback(char* topic, byte* payload, unsigned int length) {
             }
         } // heart
     } // pieceEnd
-    updateTicker.attach_ms(1000.0/FPS, strandUpdate);
 } // MQTT callback
