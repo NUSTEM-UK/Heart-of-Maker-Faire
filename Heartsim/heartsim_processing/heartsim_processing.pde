@@ -26,8 +26,8 @@ OPC opc;
 import mqtt.*;
 import de.bezier.data.sql.*;
 // Comment out next 2 lines for non-Pi platforms
-import processing.io.*;
-boolean isPi = true;
+// import processing.io.*;
+// boolean isPi = true;
 
 MQTTClient client;
 MySQL mysql;
@@ -73,10 +73,10 @@ void settings() {
 void setup() {
 
     // Set up GPIO interrupt
-    if (isPi) {
-        GPIO.pinMode(4, GPIO.INPUT);
-        GPIO.attachInterrupt(4, this, "pinEvent", GPIO.RISING);
-    }
+    // if (isPi) {
+    //     GPIO.pinMode(4, GPIO.INPUT);
+    //     GPIO.attachInterrupt(4, this, "pinEvent", GPIO.RISING);
+    // }
 
     // Fire up the object array
     hearts = new Heart[numHearts];
@@ -97,6 +97,12 @@ void setup() {
             heartRate,
             hue
         );
+    }
+    // Set the uppermost row of hearts to pulse red
+    // at 60bpm
+    for (int i = 420; i < numHearts ; i++) {
+        hearts[i].setColour(0, 1.0);
+        hearts[i].setRate(60, 1.0);
     }
 
     // Instantiate the DisposeHandler
