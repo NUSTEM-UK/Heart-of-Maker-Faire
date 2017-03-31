@@ -1,0 +1,5 @@
+sudo ~/fadecandy/fadecandy/bin/fcserver-rpi /home/pi/Heart-of-Maker-Faire/Heartsim/fadecandy_config/fcserver-FULL.json 
+
+~/Downloads/processing-3.3/processing-java --sketch=/home/pi/Heart-of-Maker-Faire/Heartsim/heartsim_processing/ --run
+
+
