@@ -44,7 +44,7 @@ class Heart {
             step = rate/240.0 * (60.0/4.0);
         } else {
             // We have no assigned heart rate, and we're going to run the
-            // default animation at 1 frame per frame
+            // default animation at half a frame per frame
             step = 0.5;
         }
 

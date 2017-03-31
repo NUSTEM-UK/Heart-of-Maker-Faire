@@ -1,6 +1,7 @@
+#include <Adafruit_NeoPixel.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <Adafruit_NeoPixel.h>
+
 
 // NeoPixel strip settings
 #define NeoPIN 4
@@ -68,7 +69,8 @@ void setup() {
     skutterNameString.toCharArray(skutterNameArray, 60);
 
     // Subscribe to the `average` heart
-    subsTopicString = "heart/average/setRate";
+    subsTopicString = "heart/#";
+    //    subsTopicString = "heart/average/setRate";
     subsTopicString.toCharArray(subsTopicArray, 60);
     client.setServer(mqtt_server, 1883);
     // Set up callback to handle payloads on this topic
@@ -83,24 +85,22 @@ void setup() {
     // assume starting rate of 60bpm
     rate = 60;
     numFrames = 240;
-    
+
 }
 
 void loop() {
     if (!client.connected()) {
-    reconnect();
+        reconnect();
     }
 
     currentTime = millis();
     if (currentTime - lastTime > sixtieth) {
-      strandUpdate();
-      lastTime = millis();
+        strandUpdate();
+        lastTime = millis();
     }
 }
 
 void strandUpdate() {
-    // Calulate how many frames to advance
-    step = rate/240.0 * (FPS / 4.0);
     // Advance by that many frames
     currentAnimFrame += step;
     currentAnimFrame = (int)currentAnimFrame % numFrames;
@@ -118,7 +118,7 @@ void strandUpdate() {
 
 // Handle MQTT message receipt
 void callback(char* topic, byte* payload, unsigned int length) {
-    
+
     // Convert topic and message to C++ String types, for ease of handling
     String payloadString;
     String subString;
@@ -167,6 +167,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
                     // Look to see if setRate called, which it really should be
                     if (topicString == "setRate") {
                         rate = topicString.toInt();
+                        // Calulate how many frames to advance
+                        step = rate/240.0 * (FPS / 4.0);
+                        // reset the frame counter so all average hearts beat in sync
+                        currentAnimFrame = 0.0;
                     } // setRate
                 } else {
                     Serial.println("It's all gone horribly wrong");
