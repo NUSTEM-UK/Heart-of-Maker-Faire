@@ -3,11 +3,12 @@ from time import sleep
 from microdotphat import *
 from gpiozero import LED, Button
 from neoshomf import *
+from sqlhomf import *
 
 # setup the LED pins for the Rotary Encoder, common anode so active_high = False
-green = LED(8, active_high=False)
-red = LED(11, active_high=False)
-blue = LED(10, active_high=False)
+green = LED(16, active_high=False)
+red = LED(20, active_high=False)
+blue = LED(21, active_high=False)
 
 # setup the LED pins for the 'Go' button, common anode so active_high = False
 greenB = LED(5, active_high=False)
@@ -16,7 +17,7 @@ blueB = LED(12, active_high=False)
 
 # the 'go' button sits on pin 26
 button = Button(26)
-
+shortButton = Button(24)
 # the Encoder pins are on 27 and 17.
 clk = 27
 dt = 17
@@ -25,13 +26,16 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-def printing():
+def error(code):
+    code = str(code)
     clear()
-    write_string('Printing...')
-    scroll()
+    write_string(code, kerning = False)
+    show()
+    sleep(2)
+    clear()
     show()
 
-def encoder(colour):
+def encoder(colour, cellNum):
     clear()
     ringSelect(strip, colour, 0, True)
     last_time_checked = int(round(time.time()*1000)) # record the start time
@@ -88,20 +92,33 @@ def encoder(colour):
         clkLastState = clkState
         #sleep(0.001)
         if button.is_pressed:
-            print('Button pressed')
-            redB.off()
-            blueB.off()
-            greenB.off()
-            red.off()
-            blue.off()
-            green.off()
-            clear()
-            show()
-            return int(counter/2)
+            if shortButton.is_pressed:
+                release(conn,cellNum)
+                redB.off()
+                blueB.off()
+                greenB.off()
+                red.off()
+                blue.off()
+                green.off()
+                clear()
+                show()
+                neocleanup(strip)
+                return False
+            else:
+                print('Button pressed')
+                redB.off()
+                blueB.off()
+                greenB.off()
+                red.off()
+                blue.off()
+                green.off()
+                clear()
+                show()
+                return int(counter/2)
 
 if __name__ == '__main__':
-    while True:
-        greenB.on()
+    
+    encoder('green')
 
     #print(encoder('magenta'))
     neocleanup(strip)

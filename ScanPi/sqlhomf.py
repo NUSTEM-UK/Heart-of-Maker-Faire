@@ -28,6 +28,7 @@ def watch_colour_picker(conn, cellNum):
     c.execute("""SELECT * FROM heart_watch WHERE status = 0""")
     rows = c.fetchall()
     if not rows: # if all four colurs have been chosen return False
+        conn.commit()
         return False
     randomChoice = random.randint(0, len(rows)-1)
     chosenRow = rows[randomChoice]
@@ -63,7 +64,7 @@ def create_new_table(conn, populate):
                                             heart_rate integer
                                         )""")
         if populate == True:
-            for i in range(512):
+            for i in range(420):
                 sql = """ INSERT INTO heart_store\
                         (cell_id,qr_code,heart_rate) \
                         VALUES ('%d', '%d', '%d')""" % \
@@ -105,6 +106,17 @@ def store_old_data(conn):
     except Error as e:
         print(e)
 
+def release(conn,location):
+    sql = """ UPDATE heart_store
+              SET qr_code = 0 ,
+                  heart_rate = 0
+              WHERE  cell_id = '%d' """ % location
+    c = conn.cursor()
+    c.execute(sql)
+    c.execute("""UPDATE heart_watch SET heartNum = 0, status = 0 WHERE
+                heartNum = '%d'""" % location)
+    conn.commit()
+
 def QR_usage_checker(conn, qrcode):
     try:
         c = conn.cursor()
@@ -114,19 +126,24 @@ def QR_usage_checker(conn, qrcode):
             print("UNIQUE")
             return(True)
         else:
-            print("NOT UNIQUE")
-            return(False)
+            print("NOT UNIQUE")            
+            return(row[0][0])
     except:
         pass
 
-def unique_cell_picker(conn):
+def unique_cell_picker(conn, short):
     c = conn.cursor()
-    c.execute("SELECT * FROM heart_store WHERE qr_code=0")
+    if short:
+        print('SHORT')
+        c.execute("SELECT * FROM heart_store WHERE qr_code=0 AND cell_id < 210")
+    else:
+        print('TALL')
+        c.execute("SELECT * FROM heart_store WHERE qr_code=0")
     rows = c.fetchall()
     randomcell = random.randint(0,len(rows)-1)
     chosen_row = rows[randomcell]
     return(chosen_row[0])
-
+    
 # try to connect to the SQL server and database
 try:
     conn = MySQLdb.connect(host,user,password,database)

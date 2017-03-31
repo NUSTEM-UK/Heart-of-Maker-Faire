@@ -17,6 +17,7 @@ def QRread():
     else:               # if it did, we chop out the needed data
         QRstr = str(code[0])
         QRint = int(QRstr[2:len(QRstr)-1])
+        print(QRint)
         return QRint
 
 if __name__ == '__main__':
