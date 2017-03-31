@@ -158,16 +158,16 @@ void setup() {
     // BEGIN MQTT configuration
     // Initialise the MQTT connection
     // See https://github.com/256dpi/processing-mqtt
-    client = new MQTTClient(this);
+    // client = new MQTTClient(this);
     // Connect to MQTT server, identifying this client ID as heartsim
-    client.connect("mqtt://192.168.1.1", "heartsim");
+    // client.connect("mqtt://192.168.1.1", "heartsim");
     // Subscribe to the /heart topic
-    client.subscribe("heart/#");
+    // client.subscribe("heart/#");
     // client.subscribe(".heart", int qos);
     // END MQTT configuration
 
     // Conenct to the MySQL server. Might as well hold this connection open
-    mysql = new MySQL( this, server, dbname, user, pass );
+    // mysql = new MySQL( this, server, dbname, user, pass );
 
     frameRate(60);
     colorMode(HSB);
