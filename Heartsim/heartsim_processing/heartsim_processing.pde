@@ -40,7 +40,7 @@ DisposeHandler dh;
 
 // Number of columns and rows in the grid
 int cols = 30;
-int rows = 16;
+int rows = 15;
 int numHearts = cols * rows;
 // Geometry: over how many boards is the display arranged?
 // Should be a factor of cols
