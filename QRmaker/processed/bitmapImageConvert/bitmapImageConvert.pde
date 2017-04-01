@@ -10,7 +10,7 @@ void setup() {
 
 void draw() {
   // Where are the target files?
-  File dir = new File("/Users/rygp8/GitHub/Heart-of-Maker-Faire/QRmaker/processed");
+  File dir = new File("/Users/jonathan/Documents/Development/Heart-of-Maker-Faire/QRmaker/processed");
   File[] files = dir.listFiles();
 
   String      filename, basename;
