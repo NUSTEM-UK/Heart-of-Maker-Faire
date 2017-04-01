@@ -39,7 +39,7 @@ try:
     client = mqtt.Client()
     client.connect('192.168.1.1')
     client.on_connect = on_connect
-    if socket.gethostname() == 'Scanner1.local':
+    if socket.gethostname() == 'Scanner1':
         client.on_message = on_message
     client.loop_start()
 except:

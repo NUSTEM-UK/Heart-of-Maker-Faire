@@ -55,7 +55,6 @@ def qrprintout(heartRate, qrCode, status):
     printer.feed(3)  #adding extra paper to come out of the printer
 
 if __name__ == '__main__':
-    filename = "QRbytes/" + str(location) + ".py"
+    filename = "QRbytes2/" + str(location) + ".py"
     execfile(filename)
     qrprintout(hr, location, status)
-
