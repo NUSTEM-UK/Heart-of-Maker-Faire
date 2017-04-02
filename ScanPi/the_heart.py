@@ -7,11 +7,14 @@ from scanninghomf import *
 from sqlhomf import *
 from gpiozero import LightSensor, Button # The gpio Lightsensor
 from rotaryhomf import *
+import socket
+import os
 
 def main():
     print("It begins")
+    if socket.gethostname() == 'Scanner1':
+         os.system("python3 /home/pi/heart-of-maker-faire/ScanPi/macMQTT.py &")
     ldr = LightSensor(23, charge_time_limit=0.2, threshold = 0.1) # LDR sensor
-
     last_time_checked = int(round(time.time()*1000)) # record the start time
     frame = 0 # set the initial frame to zero for the blinky lights
     unique = False # set the QR repetition bool to False
@@ -35,7 +38,7 @@ def main():
                 continue
 
             unique = QR_usage_checker(conn, scannedQR) # check for an already used QR
-            
+
             if unique == True:
                 cell_num = unique_cell_picker(conn, short) # choose a unique cell
                 update_heart(conn, cell_num, scannedQR, 0) # bagsey the cell from the database
@@ -51,7 +54,9 @@ def main():
                 error('Reset')
                 continue
             update_heart(conn, cell_num, scannedQR, heartrate)
+            average = getAverage(conn)
             MQTTsend(cell_num, status, heartrate)
+            sendAverage(average)
             HRprinter(scannedQR, heartrate, status)
             countdown()
 

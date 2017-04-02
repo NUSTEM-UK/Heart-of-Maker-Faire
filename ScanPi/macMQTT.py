@@ -23,39 +23,14 @@ def on_connect(client, userdata, rc):
     # as new topics are created.
     client.subscribe("heart/#")
 
-def MQTTsend(location, status, data):
-    # turn the data into a string
-    # heart/[heartnum]/setMode : payload
-    # heart/[heartnum]/setrate : payload
-    setModeString = "heart/"+str(location).zfill(3)+"/setMode" # zfill adds leading zeros
-    setRateString = "heart/"+str(location).zfill(3)+"/setRate"
-
-    client.publish(setModeString, status, 1)
-    time.sleep(0.01)
-    client.publish(setRateString, data, 1)
-    time.sleep(0.01)
-
-def sendAverage(average):
-    averageString = "heart/average"
-    client.publish(averageString, average, 1)
-    time.sleep(0.01)
-    print("Sending new average - %d" % average)
-
 try:
     client = mqtt.Client()
     client.connect('192.168.1.1')
     client.on_connect = on_connect
+    client.on_message = on_message
     client.loop_start()
 except:
     print("Error connecting to MQTT, are you on the correct network?")
 
-if __name__ == '__main__':
-    time.sleep(2)
-    print("Sending data...")
-    try:
-        MQTTsend(60,'clear', 65)
-        print("Data sent")
-    except:
-        print("Error sending data...")
-    while True:
-        pass
+while True:
+    pass

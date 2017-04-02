@@ -37,6 +37,8 @@ def error(code):
 
 def encoder(colour, cellNum):
     clear()
+    write_string('60', kerning=False)
+    show()
     ringSelect(strip, colour, 0, True)
     last_time_checked = int(round(time.time()*1000)) # record the start time
     frame = 0 # set the initial frame to zero for the blinky lights
@@ -63,7 +65,7 @@ def encoder(colour, cellNum):
         redB.off()
         blueB.off()
         greenB.off()
-    counter = 80
+    counter = 120
     clkLastState = GPIO.input(clk)
     while True:
         last_time_checked, frame = pulselight(strip, last_time_checked, frame, counter/2)
@@ -117,7 +119,7 @@ def encoder(colour, cellNum):
                 return int(counter/2)
 
 if __name__ == '__main__':
-    
+
     encoder('green')
 
     #print(encoder('magenta'))

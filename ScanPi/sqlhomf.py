@@ -11,6 +11,14 @@ user = "root"
 password = "plokij"
 database = "Heart"
 
+def getAverage(conn):
+    c = conn.cursor()
+    c.execute("""SELECT AVG(heart_rate) FROM heart_store WHERE heart_rate != 0""")
+    rows = c.fetchall()
+    average = int(rows[0][0]))
+    conn.commit()
+    return average
+
 def create_heartwatch_table(conn):
     c = conn.cursor()
     c.execute("""DROP TABLE IF EXISTS heart_watch""")
@@ -37,7 +45,7 @@ def watch_colour_picker(conn, cellNum):
 
     # Lock in that colour choice
     sql = """ UPDATE heart_watch
-              SET status = 1 
+              SET status = 1
               WHERE  colour = '%s' """ % chosenColour
     c.execute(sql)
     conn.commit()
@@ -126,7 +134,7 @@ def QR_usage_checker(conn, qrcode):
             print("UNIQUE")
             return(True)
         else:
-            print("NOT UNIQUE")            
+            print("NOT UNIQUE")
             return(row[0][0])
     except:
         pass
@@ -143,7 +151,7 @@ def unique_cell_picker(conn, short):
     randomcell = random.randint(0,len(rows)-1)
     chosen_row = rows[randomcell]
     return(chosen_row[0])
-    
+
 # try to connect to the SQL server and database
 try:
     conn = MySQLdb.connect(host,user,password,database)
@@ -167,4 +175,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print('End Prog')
         conn.close()
-
