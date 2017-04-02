@@ -15,7 +15,7 @@ def getAverage(conn):
     c = conn.cursor()
     c.execute("""SELECT AVG(heart_rate) FROM heart_store WHERE heart_rate != 0""")
     rows = c.fetchall()
-    average = int(rows[0][0]))
+    average = int(rows[0][0])
     conn.commit()
     return average
 

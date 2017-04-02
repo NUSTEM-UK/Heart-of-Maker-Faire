@@ -68,7 +68,7 @@ def encoder(colour, cellNum):
     counter = 120
     clkLastState = GPIO.input(clk)
     while True:
-        last_time_checked, frame = pulselight(strip, last_time_checked, frame, counter/2)
+        #last_time_checked, frame = pulselight(strip, last_time_checked, frame, counter/2)
         clear()
         clkState = GPIO.input(clk)
         dtState = GPIO.input(dt)
@@ -120,7 +120,7 @@ def encoder(colour, cellNum):
 
 if __name__ == '__main__':
 
-    encoder('green')
+    encoder('green',56)
 
     #print(encoder('magenta'))
     neocleanup(strip)

@@ -3,6 +3,7 @@ from sqlhomf import *
 import time
 import re
 import socket
+import os
 
 def on_message(client, userdata, msg):
     """Output diagnostic when message sent via broker."""
@@ -24,6 +25,7 @@ def on_connect(client, userdata, rc):
     client.subscribe("heart/#")
 
 try:
+    print(os.getpid())
     client = mqtt.Client()
     client.connect('192.168.1.1')
     client.on_connect = on_connect

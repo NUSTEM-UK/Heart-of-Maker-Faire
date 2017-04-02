@@ -12,8 +12,11 @@ import os
 
 def main():
     print("It begins")
-    if socket.gethostname() == 'Scanner1':
-         os.system("python3 /home/pi/heart-of-maker-faire/ScanPi/macMQTT.py &")
+    if socket.gethostname() == 'Scanner2':
+        print("Behold, I am scanner 2 and in charge of the Callback")
+        os.system("python3 /home/pi/heart-of-maker-faire/ScanPi/macMQTT.py &")
+    else:
+        print("Behold, I am scanner 1 and not in charge of anything")
     ldr = LightSensor(23, charge_time_limit=0.2, threshold = 0.1) # LDR sensor
     last_time_checked = int(round(time.time()*1000)) # record the start time
     frame = 0 # set the initial frame to zero for the blinky lights
