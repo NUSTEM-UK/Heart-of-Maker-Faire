@@ -44,7 +44,7 @@ def qrprintout(heartRate, qrCode, status):
     printer.println("\n")  #creating a space between text
 
     # #Print QR code
-    printer.printBitmap(348, 348, data)  #printing qr code
+    printer.printBitmap(174, 174, data)  #printing qr code
 
     #get in touch
     printer.setLineHeight(10)  #setting spaze size

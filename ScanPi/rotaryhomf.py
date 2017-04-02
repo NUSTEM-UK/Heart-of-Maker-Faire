@@ -37,7 +37,7 @@ def error(code):
 
 def encoder(colour, cellNum):
     clear()
-    write_string('60', kerning=False)
+    write_string('   60', kerning=False)
     show()
     ringSelect(strip, colour, 0, True)
     last_time_checked = int(round(time.time()*1000)) # record the start time

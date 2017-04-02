@@ -28,7 +28,7 @@ def main():
         if (ldr.value > 0.9) or button.is_pressed:   # a heart has been placed on the scanner
             short = shortButton.is_pressed
             print("Heart detected")
-            ringSelect(strip, 'blank', 1, True)
+            ringSelect(strip, 'cyan', 1, True)
             time.sleep(2) # positioning delay
             scannedQR = QRread()    # read the QR on the heart
 
@@ -44,6 +44,8 @@ def main():
 
             if unique == True:
                 cell_num = unique_cell_picker(conn, short) # choose a unique cell
+                if cell_num == False:   
+                    continue
                 update_heart(conn, cell_num, scannedQR, 0) # bagsey the cell from the database
             else:
                 cell_num = unique
@@ -51,6 +53,7 @@ def main():
             if status == False: # what if we've run out of indication colours
                 error('Wait')
                 continue
+            MQTTsend(cell_num, status, 0)
             ringSelect(strip, status, 2, True)
             heartrate = encoder(status,cell_num)
             if heartrate == False:

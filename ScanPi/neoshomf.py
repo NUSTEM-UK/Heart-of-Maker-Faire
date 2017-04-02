@@ -22,7 +22,7 @@ def countdown():
     for i in range(16,32):
         strip.setPixelColor(i, Color(0,0,0))
         strip.show()
-        time.sleep(28/16)
+        time.sleep(18/16)
 
 def millis():   # a function to return the current time in millis
     millis = int(round(time.time()*1000))

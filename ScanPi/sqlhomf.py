@@ -148,6 +148,9 @@ def unique_cell_picker(conn, short):
         print('TALL')
         c.execute("SELECT * FROM heart_store WHERE qr_code=0")
     rows = c.fetchall()
+    if not rows:
+        print("We're full")
+        return False
     randomcell = random.randint(0,len(rows)-1)
     chosen_row = rows[randomcell]
     return(chosen_row[0])

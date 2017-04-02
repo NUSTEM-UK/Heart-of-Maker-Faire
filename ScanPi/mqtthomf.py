@@ -36,7 +36,7 @@ def MQTTsend(location, status, data):
     time.sleep(0.01)
 
 def sendAverage(average):
-    averageString = "heart/average/setRate"
+    averageString = "heart/666/setRate"
     client.publish(averageString, average, 1)
     time.sleep(0.01)
     print("Sending new average - %d" % average)
