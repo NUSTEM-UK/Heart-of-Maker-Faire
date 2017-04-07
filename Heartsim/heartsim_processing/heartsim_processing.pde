@@ -159,8 +159,13 @@ void setup() {
     // Initialise the MQTT connection
     // See https://github.com/256dpi/processing-mqtt
     client = new MQTTClient(this);
-    // Connect to MQTT server, identifying this client ID as heartsim
+    // Connect to MQTT server, identifying this client ID
+    // NB. Requires unique client ID here, or one connection is rejected
+    // ...so if running multiple Heartsim Pis, set accordingly here
+    // (this was a kludge to workaround Pis not liking FadeCandies connected via USB hubs --
+    // we ran 2x Pis each simulating the entire display, but only outputting to half the cells.)
     client.connect("mqtt://192.168.1.1", "heartsim");
+    // client.connect("mqtt://192.168.1.1", "heartsim2");
     // Subscribe to the /heart topic
     client.subscribe("heart/#");
     // client.subscribe(".heart", int qos);
@@ -244,8 +249,15 @@ void messageReceived(String topic, byte[] payload) {
 
       // Handle setRate command
       if (command.equals("setRate")) {
-        println("### Command Heart #" + heartNum + " to setRate: " + Integer.parseInt(payloadString) );
-        hearts[heartNum].setRate(Integer.parseInt(payloadString));
+          // Catch average heart rate update
+          if (heartNum == 666) {
+            for (int i = 420; i < numHearts ; i++) {
+                hearts[i].setRate(Integer.parseInt(payloadString));
+          }
+          } else {
+            println("### Command Heart #" + heartNum + " to setRate: " + Integer.parseInt(payloadString) );
+            hearts[heartNum].setRate(Integer.parseInt(payloadString));
+          }
       }
 
     } // if topicParts.length
